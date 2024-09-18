@@ -9,7 +9,7 @@ const JobDetails = ({ job }) => {
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 gap-4">
-        <div className="flex flex-row items-center justify-start gap-4">
+        <div className="flex flex-row items-start justify-start gap-4">
           <div className="rounded bg-primary/10 flex flex-row items-start justify-start p-3">
             <img
               className="h-12 w-12 relative overflow-hidden"
@@ -21,7 +21,7 @@ const JobDetails = ({ job }) => {
             <h1 className="text-gray-900 leading-[24px] text-xl">
               {job.title}
             </h1>
-            <div className="self-stretch flex flex-row items-center justify-start gap-2 text-sm">
+            <div className="self-stretch flex flex-col lg:flex-row items-start justify-start gap-2 text-sm">
               <span className="text-gray-400">at Google Inc.</span>
               <span className="text-white inline-block px-3 py-1 bg-[#0BA02C] rounded font-bold uppercase">
                 {job.jobType}

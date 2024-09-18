@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import Image from "next/image";
 import location from "@/assets/location.png";
 import filters from "@/assets/filters.png";
 
@@ -26,7 +25,7 @@ const SearchAndFilter = () => {
         />
       </div>
       <div className="w-[1px] h-8 bg-gray-200" />
-      <div className="relative flex-grow">
+      <div className="relative flex-grow hidden sm:block">
         <Input
           type="text"
           placeholder="City, state or zip code"
@@ -36,24 +35,20 @@ const SearchAndFilter = () => {
           className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary"
           size={20}
         />
-        <Image
+        <img
           className="h-[18px] w-[18px] absolute right-2 top-1/2 transform -translate-y-1/2"
           alt=""
           src={location}
-          width={24}
-          height={24}
         />
       </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="text-gray-900">
-            <Image
+            <img
               className="h-[18px] w-[18px] relative mr-2"
               alt=""
               src={filters}
-              width={24}
-              height={24}
             />{" "}
             Filters
           </Button>

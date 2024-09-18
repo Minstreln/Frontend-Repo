@@ -1,13 +1,12 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Home } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 
 const Breadcrumb = () => {
-  const pathname = usePathname();
-  const pathSegments = pathname.split("/").filter((segment) => segment !== "");
+  const location = useLocation();
+  const pathSegments = location.pathname
+    .split("/")
+    .filter((segment) => segment !== "");
 
   const breadcrumbItems = pathSegments.map((segment, index) => {
     const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
@@ -25,7 +24,7 @@ const Breadcrumb = () => {
       <ol className="inline-flex items-center">
         <li className="inline-flex items-center">
           <Link
-            href="/"
+            to="/"
             className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600"
           >
             <Home className="w-4 h-4 mr-2" />
@@ -36,7 +35,7 @@ const Breadcrumb = () => {
           <li key={index} className="flex items-center">
             <span className="mx-2 text-gray-400">/</span>
             <Link
-              href={item.href}
+              to={item.href}
               className={cn(
                 "text-sm font-medium",
                 index === breadcrumbItems.length - 1
