@@ -103,6 +103,9 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .wrapper {
+    @apply max-w-7xl mx-auto px-5 sm:px-8 2xl:px-0;
+  }
 }
 
 .mySwiper {
