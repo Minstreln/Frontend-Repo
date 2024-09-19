@@ -32,13 +32,11 @@ const FindJob = () => {
       <div className="bg-white self-stretch w-full pb-16">
         <div className="wrapper flex flex-col py-6 gap-8">
           <SearchAndFilter />
-<<<<<<< HEAD
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
             {currentJobs.map((job) => (
               <Link key={job.id} to={`/find-job/${job.id}`}>
                 <JobCard {...job} />
               </Link>
-=======
           <div className="w-full flex flex-row gap-5 max-h-[800px]">
             <div className="flex-1 flex flex-col items-start justify-start gap-5">
               <h2 className="text-gray-900 text-2xl">Featured Jobs</h2>
@@ -62,7 +60,6 @@ const FindJob = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
             {jobs.slice(0, 6).map((job) => (
               <JobCard key={job.title} {...job} />
->>>>>>> David
             ))}
           </div>
           <Pagination
