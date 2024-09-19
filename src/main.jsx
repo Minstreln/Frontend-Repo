@@ -9,6 +9,9 @@ import App from "./App.jsx";
 import FindJob from "./components/find-job/FindJob.jsx";
 import Employers from "./components/employers/Employers.jsx";
 import Candidates from "./components/candidates/Candidates.jsx";
+import SignIn from "./components/SIgnIn/SignIn.jsx";
+import SignUp from "./components/SignUp/SignUp.jsx";
+import ForgetPWd from "./components/ForgetPwd/ForgetPWd.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +35,18 @@ const router = createBrowserRouter([
         path: "candidates",
         element: <Candidates />,
       },
+      {
+        path: "signIn",
+        element: <SignIn/>
+      },
+      {
+        path: "signUp",
+        element: <SignUp/>
+      },
+      {
+        path: "forget-password",
+        element: <ForgetPWd/>
+      }
     ],
   },
 ]);

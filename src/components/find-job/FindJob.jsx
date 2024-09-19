@@ -23,8 +23,8 @@ const FindJob = () => {
             <div className="flex-1 flex flex-col items-start justify-start gap-5">
               <h2 className="text-gray-900 text-2xl">Featured Jobs</h2>
               <div className="flex flex-col mr-5 sm:mr-0 items-start justify-start gap-5 relative overflow-y-auto scrollbar-hide">
-                {jobs.map((job) => (
-                  <div key={job.title} onClick={() => setJob(job)}>
+                {jobs.map((job, index) => (
+                  <div key={index} onClick={() => setJob(job)}>
                     <JobCard {...job} />
                   </div>
                 ))}
