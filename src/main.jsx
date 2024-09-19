@@ -9,6 +9,7 @@ import App from "./App.jsx";
 import FindJob from "./components/find-job/FindJob.jsx";
 import Employers from "./components/employers/Employers.jsx";
 import Candidates from "./components/candidates/Candidates.jsx";
+import JobDetailsWrapper from "./components/find-job/JobDetailsWrapper.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "find-job",
         element: <FindJob />,
+      },
+      {
+        path: "find-job/:jobId",
+        element: <JobDetailsWrapper />,
       },
       {
         path: "employers",

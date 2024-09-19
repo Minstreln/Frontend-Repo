@@ -5,6 +5,7 @@ import SearchAndFilter from "./SearchAndFilter";
 import jobs from "../../lib/jobs";
 import Pagination from "../Pagination";
 import { JOBS_PER_PAGE } from "../../lib/constants";
+import { Link } from "react-router-dom";
 
 const FindJob = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +34,9 @@ const FindJob = () => {
           <SearchAndFilter />
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
             {currentJobs.map((job) => (
-              <JobCard key={job.title} {...job} />
+              <Link key={job.id} to={`/find-job/${job.id}`}>
+                <JobCard {...job} />
+              </Link>
             ))}
           </div>
           <Pagination
