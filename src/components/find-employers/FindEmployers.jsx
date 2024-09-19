@@ -29,7 +29,7 @@ const FindEmployers = () => {
           <Breadcrumb />
         </div>
       </div>
-      <div className="bg-white w-full self-stretch">
+      <div className="bg-white w-full self-stretch pb-20">
         <div className="wrapper flex flex-col gap-5 py-5">
           <SearchComponet />
           <PopularSearches />
