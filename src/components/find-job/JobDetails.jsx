@@ -5,7 +5,6 @@ import bookmark2 from "@/assets/bookmark2.png";
 import jobLocation from "@/assets/jobLocation.png";
 import { Button } from "../ui/button";
 import {
-  ArrowRight,
   Briefcase,
   Calendar,
   Clock,
@@ -20,6 +19,7 @@ import {
 import jobs from "../../lib/jobs";
 import JobCard from "../home/featured-job/JobCard";
 import { Link } from "react-router-dom";
+import ApplyJob from "./ApplyJob";
 
 const JobDetails = ({ job }) => {
   return (
@@ -56,13 +56,7 @@ const JobDetails = ({ job }) => {
               src={bookmark2}
             />
           </div>
-          <Button
-            className="text-white bg-primary font-semibold"
-            variant="contained"
-            size="lg"
-          >
-            Apply Now <ArrowRight className="h-5 w-5 ml-2" />
-          </Button>
+          <ApplyJob job={job} />
         </div>
       </div>
       <div className="w-full flex flex-col gap-5 sm:flex-row">
