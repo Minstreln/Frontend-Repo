@@ -1,14 +1,8 @@
 import { MapPin, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import location from "@/assets/location.png";
-import filters from "@/assets/filters.png";
+import Filters from "./Filters";
 
 const SearchAndFilter = () => {
   return (
@@ -42,33 +36,7 @@ const SearchAndFilter = () => {
         />
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="text-gray-900">
-            <img
-              className="h-[18px] w-[18px] relative mr-2"
-              alt=""
-              src={filters}
-            />{" "}
-            Filters
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem className="cursor-pointer">
-            Full-time
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            Part-time
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            Contract
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            Internship
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">Remote</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Filters />
       <Button>Find Job</Button>
     </div>
   );
