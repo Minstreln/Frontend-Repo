@@ -13,8 +13,8 @@ const Header = () => {
           <nav>
             {/** Desktop */}
             <ul className="space-x-4 hidden md:flex">
-              {navItems.map((item) => (
-                <li key={item}>
+              {navItems.map((item,index) => (
+                <li key={index}>
                   <Link
                     to={item.path}
                     className="text-sm text-gray-600 hover:text-primary"
@@ -55,15 +55,20 @@ const Header = () => {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            className="text-sm text-primary hover:text-primary font-semibold"
-          >
-            Sign In
-          </Button>
-          <Button variant="default" className="text-sm font-semibold">
-            Sign Up
-          </Button>
+          <Link to="/signIn">
+            <Button
+              variant="outline"
+              className="text-sm text-primary hover:text-primary font-semibold"
+            >
+              Sign In
+            </Button>
+          </Link>
+          <Link to="/signUp">
+            <Button variant="default" className="text-sm font-semibold">
+              Sign Up
+            </Button>
+          </Link>
+          
         </div>
       </div>
     </header>

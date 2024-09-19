@@ -20,8 +20,8 @@ const FeaturedJob = () => {
         </Button>
       </div>
       <div className="wrapper grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 min-h-[752px] text-left text-lg text-gray-900">
-        {jobs.map((job) => (
-          <JobCard key={job.title} {...job} />
+        {jobs.map((job, index) => (
+          <JobCard key={index} {...job} />
         ))}
       </div>
     </section>
