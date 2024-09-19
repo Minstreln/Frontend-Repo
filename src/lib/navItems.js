@@ -8,8 +8,8 @@ export const navItems = [
     path: "/find-job",
   },
   {
-    name: "Employers",
-    path: "/employers",
+    name: "Find Employers",
+    path: "/find-employers",
   },
   {
     name: "Candidates",

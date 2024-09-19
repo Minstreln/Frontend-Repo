@@ -7,9 +7,9 @@ import RootLayout from "./routes/RootLayout.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
 import App from "./App.jsx";
 import FindJob from "./components/find-job/FindJob.jsx";
-import Employers from "./components/employers/Employers.jsx";
 import Candidates from "./components/candidates/Candidates.jsx";
 import JobDetailsWrapper from "./components/find-job/JobDetailsWrapper.jsx";
+import FindEmployers from "./components/find-employers/FindEmployers.jsx";
 
 const router = createBrowserRouter([
   {
@@ -30,8 +30,8 @@ const router = createBrowserRouter([
         element: <JobDetailsWrapper />,
       },
       {
-        path: "employers",
-        element: <Employers />,
+        path: "find-employers",
+        element: <FindEmployers />,
       },
       {
         path: "candidates",

@@ -5,7 +5,7 @@ import mappin from "@/assets/mappin.svg";
 const CompanyCard = () => {
   return (
     <div
-      className={`w-[424px] shadow-[0px_2px_18px_rgba(24,_25,_28,_0.03)] rounded-lg bg-gray-00 border-gray-100 border-[1px] border-solid box-border flex flex-col items-start justify-start py-[22px] px-[23px] gap-5 max-w-full text-left text-lg text-gray-scale-900 font-body-medium-400`}
+      className={`w-[424px] shadow-[0px_2px_18px_rgba(24,_25,_28,_0.03)] rounded-lg bg-gray-00 border-gray-200 border-[1px] border-solid box-border flex flex-col items-start justify-start py-[22px] px-[23px] gap-5 max-w-full text-left text-lg text-gray-scale-900 font-body-medium-400`}
     >
       <div className="self-stretch flex flex-row items-start justify-start gap-4 md:flex-wrap">
         <div className="rounded bg-[#EA4C89] flex flex-row items-start justify-start p-4">

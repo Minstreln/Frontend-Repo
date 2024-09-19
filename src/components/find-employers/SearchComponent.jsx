@@ -2,9 +2,8 @@ import { MapPin, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import location from "@/assets/location.png";
-import Filters from "./Filters";
 
-const SearchAndFilter = () => {
+const SearchComponet = () => {
   return (
     <div className="flex items-center space-x-4 py-2 border border-gray-200 rounded-md px-4">
       <div className="relative flex-grow">
@@ -35,11 +34,10 @@ const SearchAndFilter = () => {
           src={location}
         />
       </div>
-      {/** Filters */}
-      <Filters />
+
       <Button>Find Job</Button>
     </div>
   );
 };
 
-export default SearchAndFilter;
+export default SearchComponet;

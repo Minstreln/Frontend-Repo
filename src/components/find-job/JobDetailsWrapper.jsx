@@ -8,7 +8,7 @@ const JobDetailsWrapper = () => {
   const job = jobs.find((job) => job.id === jobId); // Fetch job by ID
 
   return (
-    <>
+    <section>
       <div className="bg-[#F1F2F4] w-full self-stretch">
         <div className="wrapper flex items-center justify-between py-5">
           <h1 className="text-gray-900">Job Details</h1>
@@ -22,7 +22,7 @@ const JobDetailsWrapper = () => {
           Job Not Found
         </div>
       )}
-    </>
+    </section>
   );
 };
 
