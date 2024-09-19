@@ -19,8 +19,14 @@ const ForgetPWd = () => {
       </h3>
 
       <form action="">
-        <input type="email" placeholder="Email address" className="border px-5 py-2 rounded-md text-[17px] w-full" />
-        <button className="flex items-center justify-center gap-4 w-full bg-primary rounded-md py-3 mt-5 text-white">Reset Password <IconArrowRight/></button>
+        <input
+          type="email"
+          placeholder="Email address"
+          className="border px-5 py-2 rounded-md text-[17px] w-full"
+        />
+        <button className="flex items-center justify-center gap-4 w-full bg-primary rounded-md py-3 mt-5 text-white">
+          Reset Password <IconArrowRight />
+        </button>
       </form>
     </div>
   );

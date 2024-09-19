@@ -13,7 +13,7 @@ const Header = () => {
           <nav>
             {/** Desktop */}
             <ul className="space-x-4 hidden md:flex">
-              {navItems.map((item,index) => (
+              {navItems.map((item, index) => (
                 <li key={index}>
                   <Link
                     to={item.path}
@@ -68,7 +68,6 @@ const Header = () => {
               Sign Up
             </Button>
           </Link>
-          
         </div>
       </div>
     </header>

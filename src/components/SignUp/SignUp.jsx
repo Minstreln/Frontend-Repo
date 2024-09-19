@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 const SignUp = () => {
   const password = useRef(); //ref to togggle passowrd visibility
   const confirmPwd = useRef(); //ref to togggle confrimpassowrd visibility
-//   const[active, setActive]
+  //   const[active, setActive]
 
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
   const [CPwdVisible, setCPwdVisible] = useState(false); //state for confirmpassword visibility
@@ -63,8 +63,12 @@ const SignUp = () => {
       <div className="w-full bg-gray-300 rounded-md px-3 py-4 mb-8">
         <h1 className="text-center uppercase text-sm">Create Account As a</h1>
         <div className="flex items-center justify-center gap-2 mt-2">
-          <button className="rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950"><IconBxUserCircle className="text-[24px]"/> Candidate</button>
-          <button className="rounded-md py-3 w-full flex items-center gap-2 justify-center"><IconBxBuildings className="text-[24px]"/> Employers</button>
+          <button className="rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950">
+            <IconBxUserCircle className="text-[24px]" /> Candidate
+          </button>
+          <button className="rounded-md py-3 w-full flex items-center gap-2 justify-center">
+            <IconBxBuildings className="text-[24px]" /> Employers
+          </button>
         </div>
       </div>
 
