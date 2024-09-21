@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async (values) => {
     try {
-      const res = await axios.post('http://localhost:5000/auth/register', values);
+      const res = await axios.post('https://lysterpro-backend.onrender.com/api/v1/jobseeker/signup', values);
       
       // After registration, store the token
       setAuth(res.data.token);
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post('http://localhost:5000/auth/login', { email, password });
+      const res = await axios.post('https://lysterpro-backend.onrender.com/api/v1/jobseeker/signin', { email, password });
       
       // After login, store the token
       setAuth(res.data.token);
@@ -33,6 +33,20 @@ export const AuthProvider = ({ children }) => {
       return res.data;
     } catch (err) {
       throw new Error(err.response.data.message || 'Login failed');
+    }
+  };
+
+  const forgotPassword = async (email) => {
+    try {
+      await axios.post('https://lysterpro-backend.onrender.com/api/v1/jobseeker/forgot-password', { email });
+      
+      // // After login, store the token
+      // setAuth(res.data.token);
+      // localStorage.setItem('token', res.data.token);
+      
+      // return res.data;
+    } catch (err) {
+      throw new Error(err.response.data.message || 'Reset failed');
     }
   };
 
@@ -47,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ auth, register, login, logout }}>
+    <AuthContext.Provider value={{ auth, register, login, forgotPassword, logout }}>
       {children}
     </AuthContext.Provider>
   );

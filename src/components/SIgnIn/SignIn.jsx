@@ -27,7 +27,13 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, password);
+    
+    try {
+      await login(email, password);
+      console.log('Login successful! You can now log in.');
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

@@ -22,7 +22,7 @@ const SignUp = () => {
   const [values, setvalues] = useState({
     firstName: "",
     lastName: "",
-    phone: "",
+    phoneNumber: "",
     terms: false,
     email: "",
     password: "",
@@ -70,6 +70,8 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(values)
+    
     try {
       // Call the register function from AuthContext
       await register(values);
@@ -138,8 +140,8 @@ const SignUp = () => {
                 required
                 type="number"
                 placeholder="Phone No"
-                value={values.phone}
-                onChange={() => handleInputChange("phone", event.target.value)}
+                value={values.phoneNumber}
+                onChange={() => handleInputChange("phoneNumber", event.target.value)}
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
             </div>
