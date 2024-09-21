@@ -8,18 +8,37 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(null);
 
   // Register function
-  const register = async (values) => {
-    try {
-      const res = await axios.post('https://lysterpro-backend.onrender.com/api/v1/jobseeker/signup', values);
-      
-      // After registration, store the token
-      setAuth(res.data.token);
-      localStorage.setItem('token', res.data.token);
-      
-      return res.data;
-    } catch (err) {
-      throw new Error(err.response.data.message || 'Registration failed');
+  const register = async (values, opt) => {
+    if(opt){
+      try {
+        const res = await axios.post('https://lysterpro-backend.onrender.com/api/v1/jobseeker/signup', values);
+        
+        // After registration, store the token
+        setAuth(res.data.token);
+        localStorage.setItem('token', res.data.token);
+        
+        return res.data;
+      } catch (err) {
+        throw new Error(err.response.data.message || 'Registration failed');
+      }
+
     }
+    else if(opt ==false){
+      try {
+        const res = await axios.post('https://lysterpro-backend.onrender.com/api/v1/recruiter/signup', values);
+        
+        // After registration, store the token
+        setAuth(res.data.token);
+        localStorage.setItem('token', res.data.token);
+        
+        return res.data;
+      } catch (err) {
+        throw new Error(err.response.data.message || 'Registration failed');
+      }
+
+    }
+    
+    
   };
 
   const login = async (email, password) => {

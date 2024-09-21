@@ -18,6 +18,21 @@ const SignUp = () => {
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
   const [CPwdVisible, setCPwdVisible] = useState(false); //state for confirmpassword visibility
 
+  const[opt, setOpt] = useState(true)
+  const[active, setActive] = useState(true)
+  
+
+  function handleCandidate(){
+    setActive(true)
+    setOpt(true)
+    console.log(active)
+  }
+  function handleEmployer(){
+    setActive(false)
+    setOpt(false)
+    console.log(active)
+  }
+
   //state for input values
   const [values, setvalues] = useState({
     firstName: "",
@@ -71,10 +86,10 @@ const SignUp = () => {
     e.preventDefault();
 
     console.log(values)
-    
+
     try {
       // Call the register function from AuthContext
-      await register(values);
+      await register(values, opt);
       console.log('Registration successful! You can now log in.');
     } catch (err) {
       console.log(err.message);
@@ -94,10 +109,10 @@ const SignUp = () => {
       <div className="w-full bg-gray-300 rounded-md px-3 py-4 mb-8">
         <h1 className="text-center uppercase text-sm">Create Account As a</h1>
         <div className="flex items-center justify-center gap-2 mt-2">
-          <button className="rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950">
+          <button onClick={handleCandidate} className={active ? "rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950" : "rounded-md py-3 w-full flex items-center gap-2 justify-center"}>
             <IconBxUserCircle className="text-[24px]" /> Candidate
           </button>
-          <button className="rounded-md py-3 w-full flex items-center gap-2 justify-center">
+          <button onClick={handleEmployer} className={active ? "rounded-md py-3 w-full flex items-center gap-2 justify-center" : "rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950" }>
             <IconBxBuildings className="text-[24px]" /> Employers
           </button>
         </div>
