@@ -13,6 +13,7 @@ import FindEmployers from "./components/find-employers/FindEmployers.jsx";
 import SignIn from "./components/SIgnIn/SignIn.jsx";
 import SignUp from "./components/SignUp/SignUp.jsx";
 import ForgetPWd from "./components/ForgetPwd/ForgetPWd.jsx";
+import { AuthProvider } from "./components/context/AuthContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+    
   </StrictMode>
 );

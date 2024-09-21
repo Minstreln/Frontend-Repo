@@ -4,22 +4,31 @@ import {
   IconEye,
   IconEyeInvisible,
 } from "../../assets/icons/icons";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import AuthContext from "../context/AuthContext";
 
 const SignIn = () => {
-  const password = useRef(); //ref to togggle passowrd visibility
-
+  const pwd = useRef(); //ref to togggle passowrd visibility
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
+  const { login } = useContext(AuthContext); //get login function from context
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
 
   function DisplayPassword() {
-    if (password.current.type == "password") {
-      password.current.type = "text";
+    if (pwd.current.type == "password") {
+      pwd.current.type = "text";
       setPwdVisible(true);
     } else {
-      password.current.type = "password";
+      pwd.current.type = "password";
       setPwdVisible(false);
     }
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await login(email, password);
+  };
 
   return (
     <div className="w-[600px] mx-auto my-20">
@@ -31,11 +40,13 @@ const SignIn = () => {
         </Link>
       </h3>
       <div>
-        <form action="">
+        <form action="" onSubmit={handleSubmit}>
           <div className="grid grid-rows-2 gap-4">
             <div className="w-[90%]">
               <input
                 type="email"
+                value={email}
+                onChange={()=>setEmail(event.target.value)}
                 required
                 placeholder="Email address"
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
@@ -52,7 +63,9 @@ const SignIn = () => {
                 type="password"
                 name="pwd"
                 required
-                ref={password}
+                ref={pwd}
+                value={password}
+                onChange={()=>setPassword(event.target.value)}
                 placeholder="Password"
                 id="password"
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
