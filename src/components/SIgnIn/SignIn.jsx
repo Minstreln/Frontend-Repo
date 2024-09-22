@@ -13,7 +13,8 @@ const SignIn = () => {
   const { login } = useContext(AuthContext); //get login function from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [emailIsInvalid, setEmailIsInvalid] = useState(false); // state for email validation
+  const [pwdIsInvalid, setPwdIsInvalid] = useState(false); //state for password validation
 
   function DisplayPassword() {
     if (pwd.current.type == "password") {
@@ -27,7 +28,21 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    //validating input
+    const emailIsValid =
+      email.includes("@gmail.com") ||
+      email.includes("@yahoo.com") ||
+      email == "";
+    const pwdIsValid = password.length >= 8;
+
+    if (!emailIsValid) {
+      setEmailIsInvalid(true);
+      return;
+    } else if (!pwdIsValid) {
+      setPwdIsInvalid(true);
+      return;
+    }
+
     try {
       await login(email, password);
       console.log('Login successful! You can now log in.');
@@ -57,6 +72,9 @@ const SignIn = () => {
                 placeholder="Email address"
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
+              <div className="text-red-400">
+                {emailIsInvalid && <p>Please enter a valid email address</p>}
+              </div>
             </div>
             <div className="w-[90%] relative">
               <div
@@ -76,6 +94,11 @@ const SignIn = () => {
                 id="password"
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
+              <div className="text-red-400">
+                {pwdIsInvalid && (
+                  <p>password must not be less than 8 characters</p>
+                )}
+              </div>
             </div>
           </div>
 
