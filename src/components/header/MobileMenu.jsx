@@ -24,6 +24,7 @@ const MobileMenu = () => {
               key={item}
               to={item.path}
               className="text-lg hover:text-primary"
+              onClick={() => setIsOpen(false)}
             >
               {item.name}
             </Link>

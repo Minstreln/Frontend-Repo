@@ -14,6 +14,16 @@ import SignIn from "./components/SIgnIn/SignIn.jsx";
 import SignUp from "./components/SignUp/SignUp.jsx";
 import ForgetPWd from "./components/ForgetPwd/ForgetPWd.jsx";
 import { AuthProvider } from "./components/context/AuthContext.jsx";
+import DashboardWrapper from "./components/DashboardWrapper.jsx";
+import AppliedJobs from "./components/candidates/AppliedJobs.jsx";
+import FavoriteJobs from "./components/candidates/FavoriteJobs.jsx";
+import DashboardOverviewWrapper from "./components/DashboardOverviewWrapper.jsx";
+import DashboardSettingsWrapper from "./components/DashboardSettingsWrapper.jsx";
+import EmployerProfile from "./components/employers/EmployerProfile.jsx";
+import PostJob from "./components/employers/PostJob.jsx";
+import MyJobs from "./components/employers/MyJobs.jsx";
+import SavedCandidates from "./components/employers/SavedCandidates.jsx";
+import AllCompanies from "./components/employers/AllCompanies.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,17 +52,59 @@ const router = createBrowserRouter([
         element: <Candidates />,
       },
       {
+        path: "dashboard",
+        element: <DashboardWrapper />,
+        children: [
+          {
+            index: true,
+            element: <DashboardOverviewWrapper />,
+          },
+          {
+            path: "applied-jobs",
+            element: <AppliedJobs />,
+          },
+          {
+            path: "favorite-jobs",
+            element: <FavoriteJobs />,
+          },
+          {
+            path: "settings",
+            element: <DashboardSettingsWrapper />,
+          },
+          {
+            path: "employers-profile",
+            element: <EmployerProfile />,
+          },
+          {
+            path: "post-job",
+            element: <PostJob />,
+          },
+          {
+            path: "my-jobs",
+            element: <MyJobs />,
+          },
+          {
+            path: "saved-candidates",
+            element: <SavedCandidates />,
+          },
+          {
+            path: "all-companies",
+            element: <AllCompanies />,
+          },
+        ],
+      },
+      {
         path: "signIn",
-        element: <SignIn/>
+        element: <SignIn />,
       },
       {
         path: "signUp",
-        element: <SignUp/>
+        element: <SignUp />,
       },
       {
         path: "forget-password",
-        element: <ForgetPWd/>
-      }
+        element: <ForgetPWd />,
+      },
     ],
   },
 ]);
