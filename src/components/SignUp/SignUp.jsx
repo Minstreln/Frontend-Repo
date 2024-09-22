@@ -12,25 +12,26 @@ import AuthContext from "../context/AuthContext";
 const SignUp = () => {
   const password = useRef(); //ref to togggle passowrd visibility
   const confirmPwd = useRef(); //ref to togggle confrimpassowrd visibility
-  const terms = useRef()
-  const { register } = useContext(AuthContext);  // Get register function from AuthContext
+  const terms = useRef();
+  const { register } = useContext(AuthContext); // Get register function from AuthContext
 
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
   const [CPwdVisible, setCPwdVisible] = useState(false); //state for confirmpassword visibility
 
-  const[opt, setOpt] = useState(true)
-  const[active, setActive] = useState(true)
-  
+  const [emailIsInvalid, setEmailIsInvalid] = useState(false); // state for email validation
+  const [pwdIsInvalid, setPwdIsInvalid] = useState(false); //state for password validation
+  const [CPwdIsInvalid, setCPwdIsInvalid] = useState(false); //state for password validation
 
-  function handleCandidate(){
-    setActive(true)
-    setOpt(true)
-    console.log(active)
+  const [opt, setOpt] = useState(true);
+  const [active, setActive] = useState(true);
+
+  function handleCandidate() {
+    setActive(true);
+    setOpt(true);
   }
-  function handleEmployer(){
-    setActive(false)
-    setOpt(false)
-    console.log(active)
+  function handleEmployer() {
+    setActive(false);
+    setOpt(false);
   }
 
   //state for input values
@@ -71,26 +72,58 @@ const SignUp = () => {
     }
   }
   //check if terms and conditions is checked
-  function CheckTerms(){
-    if(terms.current.checked){
-      setvalues({...values , terms: true})
-    }
-    else{
-      setvalues({...values , terms: false})
+  function CheckTerms() {
+    if (terms.current.checked) {
+      setvalues({ ...values, terms: true });
+    } else {
+      setvalues({ ...values, terms: false });
     }
   }
-  
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(values)
+    console.log(values);
+    //validating input
+    const emailIsValid =
+      values.email.includes("@gmail.com") ||
+      values.email.includes("@yahoo.com") ||
+      values.email == "";
+    const pwdIsValid = values.password.length >= 8;
+
+    if (!emailIsValid) {
+      setEmailIsInvalid(true);
+      return;
+    } else if (!pwdIsValid) {
+      setPwdIsInvalid(true);
+      return;
+    } else if (values.passwordConfirm !== values.password) {
+      setCPwdIsInvalid(true);
+      return;
+    }
 
     try {
       // Call the register function from AuthContext
       await register(values, opt);
-      console.log('Registration successful! You can now log in.');
+      console.log("Registration successful! You can now log in.");
+
+      //clear fields
+      setvalues({
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        terms: false,
+        email: "",
+        password: "",
+        passwordConfirm: "",
+      });
+      //clear passsword statee
+      setCPwdVisible(false);
+      setPwdVisible(false);
+      //clear error
+      setCPwdIsInvalid(false);
+      setEmailIsInvalid(false);
+      setPwdIsInvalid(false);
     } catch (err) {
       console.log(err.message);
     }
@@ -109,10 +142,24 @@ const SignUp = () => {
       <div className="w-full bg-gray-300 rounded-md px-3 py-4 mb-8">
         <h1 className="text-center uppercase text-sm">Create Account As a</h1>
         <div className="flex items-center justify-center gap-2 mt-2">
-          <button onClick={handleCandidate} className={active ? "rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950" : "rounded-md py-3 w-full flex items-center gap-2 justify-center"}>
+          <button
+            onClick={handleCandidate}
+            className={
+              active
+                ? "rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950"
+                : "rounded-md py-3 w-full flex items-center gap-2 justify-center"
+            }
+          >
             <IconBxUserCircle className="text-[24px]" /> Candidate
           </button>
-          <button onClick={handleEmployer} className={active ? "rounded-md py-3 w-full flex items-center gap-2 justify-center" : "rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950" }>
+          <button
+            onClick={handleEmployer}
+            className={
+              active
+                ? "rounded-md py-3 w-full flex items-center gap-2 justify-center"
+                : "rounded-md py-3 text-white w-full flex items-center gap-2 justify-center bg-blue-950"
+            }
+          >
             <IconBxBuildings className="text-[24px]" /> Employers
           </button>
         </div>
@@ -127,7 +174,9 @@ const SignUp = () => {
               placeholder="First Name"
               className="border px-5 py-2 rounded-md text-[17px]"
               value={values.firstName}
-              onChange={() => handleInputChange("firstName", event.target.value)}
+              onChange={() =>
+                handleInputChange("firstName", event.target.value)
+              }
             />
             <input
               required
@@ -148,15 +197,20 @@ const SignUp = () => {
                 onChange={() => handleInputChange("email", event.target.value)}
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
+              <div className="text-red-400">
+                {emailIsInvalid && <p>Please enter a valid email address</p>}
+              </div>
             </div>
-          
+
             <div className="w-full">
               <input
                 required
                 type="number"
                 placeholder="Phone No"
                 value={values.phoneNumber}
-                onChange={() => handleInputChange("phoneNumber", event.target.value)}
+                onChange={() =>
+                  handleInputChange("phoneNumber", event.target.value)
+                }
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
             </div>
@@ -179,6 +233,11 @@ const SignUp = () => {
                 }
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
+              <div className="text-red-400">
+                {pwdIsInvalid && (
+                  <p>password must not be less than 8 characters</p>
+                )}
+              </div>
             </div>
             <div className="w-full relative">
               <div
@@ -199,10 +258,20 @@ const SignUp = () => {
                 }
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
               />
+              <div className="text-red-400">
+                {CPwdIsInvalid && <p>password must be the same</p>}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <input required type="checkbox" onChange={CheckTerms} ref={terms} name="" id="check" />
+            <input
+              required
+              type="checkbox"
+              onChange={CheckTerms}
+              ref={terms}
+              name=""
+              id="check"
+            />
             <label htmlFor="check">
               I&apos;ve read and agree with your Terms of Services
             </label>
