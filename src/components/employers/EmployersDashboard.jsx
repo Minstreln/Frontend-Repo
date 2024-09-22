@@ -10,7 +10,7 @@ const EmployersDashboard = () => {
   return (
     <div className="wrapper">
       <div className="w-full grid grid-cols-1 lg:grid-cols-5">
-        <div className="hidden lg:block col-span-1 border-r border-r-gray-200 h-[80vh] text-gray-600">
+        <div className="hidden lg:block col-span-1 border-r border-r-gray-200 h-full text-gray-600">
           <SidebarNav
             title={"Employers Dashboard"}
             activeItem={currentPage}
