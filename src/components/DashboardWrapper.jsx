@@ -1,9 +1,12 @@
 import EmployersDashboard from "./employers/EmployersDashboard";
 import CandidateDashboard from "./candidates/CandidateDashboard";
-import useAuth from "../hooks/useAuth";
+import { useContext } from "react";
+import AuthContext from "./context/AuthContext";
+// import useAuth from "../hooks/useAuth";
 
 const DashboardWrapper = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
+  const { user } = useContext(AuthContext);
 
   if (!user) {
     // refactor to redirect user to login page
@@ -12,11 +15,7 @@ const DashboardWrapper = () => {
 
   return (
     <section className="w-full mb-20 border-b border-b-gray-200">
-      {user.type === "employer" ? (
-        <EmployersDashboard />
-      ) : (
-        <CandidateDashboard />
-      )}
+      {user === "job seeker" ? <CandidateDashboard /> : <EmployersDashboard />}
     </section>
   );
 };
