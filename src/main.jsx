@@ -16,7 +16,6 @@ import ForgetPWd from "./components/ForgetPwd/ForgetPWd.jsx";
 import DashboardWrapper from "./components/DashboardWrapper.jsx";
 import AppliedJobs from "./components/candidates/AppliedJobs.jsx";
 import FavoriteJobs from "./components/candidates/FavoriteJobs.jsx";
-import JobAlert from "./components/candidates/JobAlert.jsx";
 import DashboardOverviewWrapper from "./components/DashboardOverviewWrapper.jsx";
 import DashboardSettingsWrapper from "./components/DashboardSettingsWrapper.jsx";
 import EmployerProfile from "./components/employers/EmployerProfile.jsx";
@@ -66,10 +65,6 @@ const router = createBrowserRouter([
           {
             path: "favorite-jobs",
             element: <FavoriteJobs />,
-          },
-          {
-            path: "job-alert",
-            element: <JobAlert />,
           },
           {
             path: "settings",

@@ -1,6 +1,4 @@
-import { PersonIcon } from "@radix-ui/react-icons";
 import {
-  Bell,
   BookmarkCheck,
   Briefcase,
   BriefcaseBusiness,
@@ -8,6 +6,7 @@ import {
   Building,
   LayoutDashboard,
   Settings,
+  UserCircleIcon,
 } from "lucide-react";
 
 export const navItems = [
@@ -33,7 +32,6 @@ export const candidatesSidebarNavItems = [
   { name: "Overview", icon: LayoutDashboard, href: "" },
   { name: "Applied Jobs", icon: Briefcase, href: "applied-jobs" },
   { name: "Favorite Jobs", icon: BookmarkCheck, href: "favorite-jobs" },
-  { name: "Job Alert", icon: Bell, href: "job-alert", badge: "09" },
   { name: "Settings", icon: Settings, href: "settings" },
 ];
 
@@ -41,7 +39,7 @@ export const employersSidebarNavItems = [
   { name: "Overview", icon: LayoutDashboard, href: "" },
   {
     name: "Employers Profile",
-    icon: PersonIcon,
+    icon: UserCircleIcon,
     href: "employers-profile",
   },
   { name: "Post Job", icon: BriefcaseBusiness, href: "post-job" },

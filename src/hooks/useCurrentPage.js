@@ -13,7 +13,9 @@ const useCurrentPage = () => {
       segment.split("-").join(" ")
     );
     const currentItem = pathNames.pop();
-    if (currentItem === "dashboard") {
+    if (currentItem === "") {
+      setCurrentPage("home");
+    } else if (currentItem === "dashboard") {
       setCurrentPage("overview");
     } else setCurrentPage(currentItem);
   }, [location.pathname]);

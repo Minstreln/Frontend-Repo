@@ -2,7 +2,8 @@
 const useAuth = () => {
   // This is a placeholder. In a real app, this would come from your auth system
   const user = {
-    type: "employer",
+    type: "candidate",
+    name: "John Doe",
   };
 
   return { user };
