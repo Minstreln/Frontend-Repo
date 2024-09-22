@@ -39,21 +39,11 @@ const FindJob = () => {
               </Link>
             ))}
           </div>
-        </div>
-        <div className="bg-white self-stretch w-full py-16 border-t border-[#F1F2F4]">
-          <div className="wrapper flex flex-col py-6 gap-8">
-            <h2 className="text-gray-900 text-2xl">Related Jobs</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
-              {jobs.slice(0, 6).map((job) => (
-                <JobCard key={job.title} {...job} />
-              ))}
-            </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </section>

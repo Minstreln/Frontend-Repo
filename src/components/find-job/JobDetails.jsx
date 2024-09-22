@@ -16,9 +16,6 @@ import {
   Mail,
   Twitter,
 } from "lucide-react";
-import jobs from "../../lib/jobs";
-import JobCard from "../home/featured-job/JobCard";
-import { Link } from "react-router-dom";
 import ApplyJob from "./ApplyJob";
 
 const JobDetails = ({ job }) => {
@@ -161,6 +158,17 @@ const JobDetails = ({ job }) => {
               of this exciting story.
             </li>
           </ol>
+
+          <div className="flex flex-row items-center justify-start gap-2 py-8">
+            <div className="rounded bg-primary/10 flex flex-row items-start justify-start p-3">
+              <img
+                className="h-6 w-6 relative overflow-hidden"
+                alt=""
+                src={bookmark2}
+              />
+            </div>
+            <ApplyJob job={job} />
+          </div>
         </div>
         <div className="flex-1 flex flex-col gap-5">
           <div className="w-full flex flex-row gap-4 items-center justify-between border border-gray-200 p-5 rounded-lg text-center">
@@ -342,20 +350,6 @@ const JobDetails = ({ job }) => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/** Related jobs */}
-      <div className="w-full wrapper py-12">
-        <h3 className="text-inherit leading-[48px] font-medium font-[inherit] inline-block max-w-full text-4xl pb-8">
-          Related Jobs
-        </h3>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
-          {jobs.slice(0, 6).map((jobItem) => (
-            <Link key={jobItem.id} to={`/find-job/${jobItem.id}`}>
-              <JobCard {...jobItem} />
-            </Link>
-          ))}
         </div>
       </div>
     </div>
