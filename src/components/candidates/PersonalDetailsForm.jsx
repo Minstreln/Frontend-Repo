@@ -29,7 +29,7 @@ const PersonalDetailsForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-5">
         <div className="w-full flex flex-row gap-5 items-end justify-start">
-          <img src={userImage} alt="Brand Image" className="w-40 h-40" />
+          <img src={userImage} alt="User Image" className="w-40 h-40" />
           <div className="w-full max-w-sm flex flex-col gap-2 pb-4">
             <Label htmlFor="profileImage" className="text-gray-900 text-[16px]">
               Profile Image

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   IconArrowRight,
   IconEye,
@@ -6,15 +6,18 @@ import {
 } from "../../assets/icons/icons";
 import { useContext, useRef, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const SignIn = () => {
   const pwd = useRef(); //ref to togggle passowrd visibility
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
   const { login } = useContext(AuthContext); //get login function from context
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false); // state for email validation
   const [pwdIsInvalid, setPwdIsInvalid] = useState(false); //state for password validation
+
+  const navigate = useNavigate();
 
   function DisplayPassword() {
     if (pwd.current.type == "password") {
@@ -44,10 +47,15 @@ const SignIn = () => {
     }
 
     try {
-      await login(email, password);
-      console.log('Login successful! You can now log in.');
+      const response = await login(email, password);
+
+      if (response.status === "success") {
+        toast.success("Login successful!");
+        navigate(location.state?.from || "/dashboard");
+      }
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.message);
+      console.log("Login failed:", err.message);
     }
   };
 
@@ -67,7 +75,7 @@ const SignIn = () => {
               <input
                 type="email"
                 value={email}
-                onChange={()=>setEmail(event.target.value)}
+                onChange={() => setEmail(event.target.value)}
                 required
                 placeholder="Email address"
                 className="border px-5 py-2 rounded-md text-[17px] w-full"
@@ -89,7 +97,7 @@ const SignIn = () => {
                 required
                 ref={pwd}
                 value={password}
-                onChange={()=>setPassword(event.target.value)}
+                onChange={() => setPassword(event.target.value)}
                 placeholder="Password"
                 id="password"
                 className="border px-5 py-2 rounded-md text-[17px] w-full"

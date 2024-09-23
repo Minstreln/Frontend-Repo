@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   IconArrowRight,
   IconBxBuildings,
@@ -8,6 +8,7 @@ import {
 } from "../../assets/icons/icons";
 import { useContext, useRef, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const password = useRef(); //ref to togggle passowrd visibility
@@ -24,6 +25,9 @@ const SignUp = () => {
 
   const [opt, setOpt] = useState(true);
   const [active, setActive] = useState(true);
+
+  // for navigation
+  const navigate = useNavigate();
 
   function handleCandidate() {
     setActive(true);
@@ -104,8 +108,12 @@ const SignUp = () => {
 
     try {
       // Call the register function from AuthContext
-      await register(values, opt);
-      console.log("Registration successful! You can now log in.");
+      const response = await register(values, opt);
+
+      if (response.status === "success") {
+        navigate("/signin", { replace: true });
+        toast.success("Registration successful!");
+      }
 
       //clear fields
       setvalues({
@@ -125,6 +133,7 @@ const SignUp = () => {
       setEmailIsInvalid(false);
       setPwdIsInvalid(false);
     } catch (err) {
+      toast.error(err.message);
       console.log(err.message);
     }
   };

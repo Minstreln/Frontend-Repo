@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { Toaster } from "react-hot-toast";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "./routes/RootLayout.jsx";
@@ -24,6 +25,7 @@ import PostJob from "./components/employers/PostJob.jsx";
 import MyJobs from "./components/employers/MyJobs.jsx";
 import SavedCandidates from "./components/employers/SavedCandidates.jsx";
 import AllCompanies from "./components/employers/AllCompanies.jsx";
+import ProtectedRoutes from "./routes/ProtectedRoutes.jsx";
 
 const router = createBrowserRouter([
   {
@@ -52,48 +54,6 @@ const router = createBrowserRouter([
         element: <Candidates />,
       },
       {
-        path: "dashboard",
-        element: <DashboardWrapper />,
-        children: [
-          {
-            index: true,
-            element: <DashboardOverviewWrapper />,
-          },
-          {
-            path: "applied-jobs",
-            element: <AppliedJobs />,
-          },
-          {
-            path: "favorite-jobs",
-            element: <FavoriteJobs />,
-          },
-          {
-            path: "settings",
-            element: <DashboardSettingsWrapper />,
-          },
-          {
-            path: "employers-profile",
-            element: <EmployerProfile />,
-          },
-          {
-            path: "post-job",
-            element: <PostJob />,
-          },
-          {
-            path: "my-jobs",
-            element: <MyJobs />,
-          },
-          {
-            path: "saved-candidates",
-            element: <SavedCandidates />,
-          },
-          {
-            path: "all-companies",
-            element: <AllCompanies />,
-          },
-        ],
-      },
-      {
         path: "signIn",
         element: <SignIn />,
       },
@@ -105,6 +65,53 @@ const router = createBrowserRouter([
         path: "forget-password",
         element: <ForgetPWd />,
       },
+      {
+        path: "dashboard",
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            element: <DashboardWrapper />,
+            children: [
+              {
+                index: true,
+                element: <DashboardOverviewWrapper />,
+              },
+              {
+                path: "applied-jobs",
+                element: <AppliedJobs />,
+              },
+              {
+                path: "favorite-jobs",
+                element: <FavoriteJobs />,
+              },
+              {
+                path: "settings",
+                element: <DashboardSettingsWrapper />,
+              },
+              {
+                path: "employers-profile",
+                element: <EmployerProfile />,
+              },
+              {
+                path: "post-job",
+                element: <PostJob />,
+              },
+              {
+                path: "my-jobs",
+                element: <MyJobs />,
+              },
+              {
+                path: "saved-candidates",
+                element: <SavedCandidates />,
+              },
+              {
+                path: "all-companies",
+                element: <AllCompanies />,
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -113,6 +120,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
+      <Toaster />
     </AuthProvider>
   </StrictMode>
 );

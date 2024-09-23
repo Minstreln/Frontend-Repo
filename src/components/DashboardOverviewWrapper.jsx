@@ -1,23 +1,17 @@
-import { useContext } from "react";
-// import useAuth from "../hooks/useAuth";
 import CandidateOverview from "./candidates/CandidateOverview";
 import EmployerOverview from "./employers/EmployerOverview";
-import AuthContext from "./context/AuthContext";
+import useAuth from "../hooks/useAuth";
 
 const DashboardOverviewWrapper = () => {
-  // const { user } = useAuth();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
-  if (!user) {
-    // refactor to redirect user to login page
-    return <div>Loading...</div>;
-  }
-
-  console.log(user)
   return (
     <section className="w-full">
-      
-      {user === "job seeker" ? <CandidateOverview />: <EmployerOverview /> }
+      {user?.role === "job seeker" ? (
+        <CandidateOverview />
+      ) : (
+        <EmployerOverview />
+      )}
     </section>
   );
 };

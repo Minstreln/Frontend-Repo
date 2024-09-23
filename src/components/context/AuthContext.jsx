@@ -8,39 +8,18 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(null);
   const [user, setUser] = useState(null);
 
-
   // Register function
-  const register = async (values, opt) => {
-    if (opt) {
-      try {
-        const res = await axios.post(
-          "https://lysterpro-backend.onrender.com/api/v1/jobseeker/signup",
-          values
-        );
+  const register = async (values, isJobSeeker) => {
+    const url = isJobSeeker
+      ? "https://lysterpro-backend.onrender.com/api/v1/jobseeker/signup"
+      : "https://lysterpro-backend.onrender.com/api/v1/recruiter/signup";
 
-        // After registration, store the token
-        setAuth(res.data.token);
-        localStorage.setItem("token", res.data.token);
+    try {
+      const res = await axios.post(url, values);
 
-        return res.data;
-      } catch (err) {
-        throw new Error(err.response.data.message || "Registration failed");
-      }
-    } else if (opt == false) {
-      try {
-        const res = await axios.post(
-          "https://lysterpro-backend.onrender.com/api/v1/recruiter/signup",
-          values
-        );
-
-        // After registration, store the token
-        setAuth(res.data.token);
-        localStorage.setItem("token", res.data.token);
-
-        return res.data;
-      } catch (err) {
-        throw new Error(err.response.data.message || "Registration failed");
-      }
+      return res.data;
+    } catch (err) {
+      throw new Error(err.response.data.message || "Registration failed");
     }
   };
 
@@ -55,8 +34,9 @@ export const AuthProvider = ({ children }) => {
       setAuth(res.data.token);
       localStorage.setItem("token", res.data.token);
 
-      setUser(res.data.role)
-      localStorage.setItem("role", res.data.role);
+      // Set the full user object
+      setUser(res.data.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.data.user));
 
       return res.data;
     } catch (err) {
@@ -70,12 +50,6 @@ export const AuthProvider = ({ children }) => {
         "https://lysterpro-backend.onrender.com/api/v1/jobseeker/forgot-password",
         { email }
       );
-
-      // // After login, store the token
-      // setAuth(res.data.token);
-      // localStorage.setItem('token', res.data.token);
-
-      // return res.data;
     } catch (err) {
       throw new Error(err.response.data.message || "Reset failed");
     }
@@ -83,22 +57,24 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setAuth(null);
+    setUser(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    window.location.reload();
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) setAuth(token);
-  }, []);
+    const storedUser = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role) setUser(role);
+    if (token) setAuth(token);
+    if (storedUser) setUser(storedUser);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ auth,user, register, login, forgotPassword, logout }}
+      value={{ auth, user, register, login, forgotPassword, logout }}
     >
       {children}
     </AuthContext.Provider>

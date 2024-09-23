@@ -102,13 +102,13 @@ const CandidateOverview = () => {
     <div className="w-full flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-gray-800 font-semibold text-2xl">
-          Hello, {user.name}{" "}
+          {user?.message}
         </h1>
         <span className="text-gray-600">
           Here is your daily activities and job alerts
         </span>
       </div>
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <Card className="bg-primary/10 border-0">
           <CardContent className="flex items-center justify-between p-4">
             <div className="flex flex-col justify-center">
@@ -143,7 +143,7 @@ const CandidateOverview = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="w-full flex flex-row items-center justify-between p-5 rounded-md bg-red-500 shadow text-gray-100 ">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between p-5 gap-5 rounded-md bg-red-500 shadow text-gray-100 ">
         <div className="flex flex-row gap-2 items-center">
           <UserCircleIcon className="h-16 w-16" />
           <div className="w-full flex flex-col">
@@ -163,7 +163,7 @@ const CandidateOverview = () => {
           Edit Profile <ArrowRight className="h-5 w-5 ml-2" />
         </Button>
       </div>
-      <div>
+      <div className="w-full flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-lg text-gray-800 font-semibold">
             Recently Applied
