@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import JobDetails from "./JobDetails";
-import jobs from "../../lib/jobs";
 import Breadcrumb from "../Breadcrumb";
+import { useSingleJob } from "../../hooks/useSingleJob";
 
 const JobDetailsWrapper = () => {
   const { jobId } = useParams();
-  const job = jobs.find((job) => job.id === jobId); // Fetch job by ID
+  const { job, loading, error } = useSingleJob(jobId);
 
   return (
     <section>
@@ -15,10 +15,18 @@ const JobDetailsWrapper = () => {
           <Breadcrumb />
         </div>
       </div>
-      {job ? (
+      {loading ? (
+        <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
+          Loading...
+        </div>
+      ) : error ? (
+        <div className="wrapper w-full flex items-center text-red-500 font-semibold py-6">
+          {error}
+        </div>
+      ) : job ? (
         <JobDetails job={job} />
       ) : (
-        <div className="w-full flex items-center justify-center text-primary text-2xl font-semibold py-12">
+        <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           Job Not Found
         </div>
       )}

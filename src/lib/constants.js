@@ -12,3 +12,8 @@ export const typeOfRole = [
   { label: "Internship", value: "internship" },
   { label: "Freelance", value: "freelance" },
 ];
+
+export const userRole = {
+  jobSeeker: "job seeker",
+  employer: "employer",
+};
