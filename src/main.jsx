@@ -17,7 +17,7 @@ import ForgetPWd from "./components/ForgetPwd/ForgetPWd.jsx";
 import { AuthProvider } from "./components/context/AuthContext.jsx";
 import DashboardWrapper from "./components/DashboardWrapper.jsx";
 import AppliedJobs from "./components/candidates/AppliedJobs.jsx";
-import FavoriteJobs from "./components/candidates/FavoriteJobs.jsx";
+import SavedJobs from "./components/candidates/SavedJobs.jsx";
 import DashboardOverviewWrapper from "./components/DashboardOverviewWrapper.jsx";
 import DashboardSettingsWrapper from "./components/DashboardSettingsWrapper.jsx";
 import EmployerProfile from "./components/employers/EmployerProfile.jsx";
@@ -81,8 +81,8 @@ const router = createBrowserRouter([
                 element: <AppliedJobs />,
               },
               {
-                path: "favorite-jobs",
-                element: <FavoriteJobs />,
+                path: "saved-jobs",
+                element: <SavedJobs />,
               },
               {
                 path: "settings",

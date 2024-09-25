@@ -4,9 +4,11 @@ import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useAuth();
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -29,6 +31,14 @@ const MobileMenu = () => {
               {item.name}
             </Link>
           ))}
+
+          <Button
+            variant="outline"
+            className="text-sm bg-red-600/90 hover:bg-red-600 text-white hover:text-white font-semibold"
+            onClick={logout}
+          >
+            Log Out
+          </Button>
         </nav>
       </SheetContent>
     </Sheet>

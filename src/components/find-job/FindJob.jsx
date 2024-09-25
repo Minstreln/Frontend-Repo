@@ -1,25 +1,29 @@
-import { useMemo, useState } from "react";
 import Breadcrumb from "../Breadcrumb";
 import JobCard from "../home/featured-job/JobCard";
 import SearchAndFilter from "./SearchAndFilter";
-import jobs from "../../lib/jobs";
 import Pagination from "../Pagination";
 import { JOBS_PER_PAGE } from "../../lib/constants";
 import { Link } from "react-router-dom";
+import { useAllJobs } from "../../hooks/useAllJobs";
+import { useMemo, useState } from "react";
+import Loading from "../Loading";
 
 const FindJob = () => {
+  const { jobs, loading, error } = useAllJobs();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(jobs.length / JOBS_PER_PAGE);
+  const totalPages = useMemo(
+    () => Math.ceil(jobs.length / JOBS_PER_PAGE),
+    [jobs]
+  );
 
-  const currentJobs = useMemo(() => {
-    const indexOfLastJob = currentPage * JOBS_PER_PAGE;
-    const indexOfFirstJob = indexOfLastJob - JOBS_PER_PAGE;
-    return jobs.slice(indexOfFirstJob, indexOfLastJob);
-  }, [currentPage]);
+  const paginatedJobs = useMemo(() => {
+    const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
+    return jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
+  }, [jobs, currentPage]);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const goToPage = (page) => {
+    setCurrentPage(page);
   };
   return (
     <section>
@@ -29,23 +33,51 @@ const FindJob = () => {
           <Breadcrumb />
         </div>
       </div>
-      <div className="bg-white self-stretch w-full pb-16">
-        <div className="wrapper flex flex-col py-6 gap-8">
-          <SearchAndFilter />
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
-            {currentJobs.map((job) => (
-              <Link key={job.id} to={`/find-job/${job.id}`}>
-                <JobCard {...job} />
-              </Link>
-            ))}
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+      {loading && (
+        <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
+          <Loading />
         </div>
-      </div>
+      )}
+
+      {error && (
+        <div className="wrapper w-full flex items-center text-red-500 font-semibold py-6">
+          Error: {error}
+        </div>
+      )}
+
+      {!loading && !error && jobs.length === 0 && (
+        <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
+          No jobs found
+        </div>
+      )}
+
+      {!loading && !error && jobs && jobs.length > 0 && (
+        <div className="bg-white self-stretch w-full pb-16">
+          <div className="wrapper flex flex-col py-6 gap-8">
+            <SearchAndFilter />
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
+              {paginatedJobs.map((job) => (
+                <Link key={job._id} to={`/find-job/${job._id}`}>
+                  <JobCard
+                    position={job.position}
+                    employmentType={job.employmentType}
+                    salary={job.salary}
+                    hiringCompany={job.hiringCompany}
+                    companyLocation={job.location}
+                  />
+                </Link>
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 };
