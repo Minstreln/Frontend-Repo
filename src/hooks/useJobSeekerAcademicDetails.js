@@ -48,7 +48,7 @@ export const useJobSeekerAcademicDetails = () => {
             headers: auth ? { Authorization: `Bearer ${auth}` } : {},
           }
         );
-        console.log(response);
+
         if (response.status === 204) {
           toast.success("Academic detail deleted successfully");
           fetchAcademicDetails();

@@ -3,13 +3,13 @@ import useAuth from "./useAuth";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const useJobSeekerWorkExperience = () => {
+export const useJobSeekerResume = () => {
   const { auth } = useAuth();
-  const [workExperience, setWorkExperience] = useState([]);
+  const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchWorkExperience = useCallback(async () => {
+  const fetchResumes = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -22,21 +22,19 @@ export const useJobSeekerWorkExperience = () => {
       );
 
       if (response.data.status === "success") {
-        setWorkExperience(response.data.data.experienceDetails);
+        setResumes(response.data.data.resumeDetails);
       } else {
-        throw new Error("Failed to fetch work experience");
+        throw new Error("Failed to fetch resume");
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Failed to fetch work experience"
-      );
+      setError(err.response?.data?.message || "Failed to fetch resume");
       console.error("Failed to fetch work experience", err);
     } finally {
       setLoading(false);
     }
   }, [auth]);
 
-  const deleteWorkExperience = useCallback(
+  const deleteResume = useCallback(
     async (id) => {
       setLoading(true);
       setError(null);
@@ -50,32 +48,30 @@ export const useJobSeekerWorkExperience = () => {
         );
         console.log(response);
         if (response.status === 204) {
-          toast.success("Work experience deleted successfully");
-          fetchWorkExperience();
+          toast.success("Resume deleted successfully");
+          fetchResumes();
         } else {
-          throw new Error("Failed to delete work experience");
+          throw new Error("Failed to delete resume");
         }
       } catch (err) {
-        setError(
-          err.response?.data?.message || "Failed to delete work experience"
-        );
-        console.error("Failed to delete work experience", err);
+        setError(err.response?.data?.message || "Failed to delete resume");
+        console.error("Failed to delete resume", err);
       } finally {
         setLoading(false);
       }
     },
-    [auth, fetchWorkExperience]
+    [auth, fetchResumes]
   );
 
   useEffect(() => {
-    fetchWorkExperience();
-  }, [fetchWorkExperience]);
+    fetchResumes();
+  }, [fetchResumes]);
 
   return {
-    workExperience,
+    resumes,
     loading,
     error,
-    refetch: fetchWorkExperience,
-    deleteWorkExperience,
+    refetch: fetchResumes,
+    deleteResume,
   };
 };
