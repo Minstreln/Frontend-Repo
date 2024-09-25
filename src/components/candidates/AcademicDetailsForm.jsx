@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -18,10 +19,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const years = Array.from({ length: 41 }, (v, i) => (1990 + i).toString());
 
-const AcademicDetailsForm = () => {
+const AcademicDetailsForm = ({ refetch }) => {
+  const [open, setOpen] = useState(false);
+
+  const { auth } = useAuth();
+
   const {
     control,
     register,
@@ -38,12 +47,41 @@ const AcademicDetailsForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("institutionName", data.institutionName);
+      formData.append("location", data.location);
+      formData.append("yearOfCompletion", data.yearOfCompletion);
+      formData.append("course", data.course);
+      formData.append("certificate", data.certificate[0]);
+
+      const response = await axios.post(
+        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/academic-detail",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        toast.success("Academic details added successfully");
+        reset();
+        setOpen(false);
+        refetch();
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error adding academic details:", error);
+    }
   };
+
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             className="text-white bg-primary font-semibold"
@@ -173,6 +211,7 @@ const AcademicDetailsForm = () => {
                   <Input
                     type="file"
                     id="certificate"
+                    accept=".doc,.docx,.pdf,.txt,.odt"
                     {...register("certificate", { required: true })}
                     className="focus-visible:ring-0"
                   />
@@ -198,14 +237,15 @@ const AcademicDetailsForm = () => {
                     type="submit"
                     size="lg"
                     className="font-semibold"
+                    disabled={isSubmitting}
                   >
                     {isSubmitting ? (
-                      <div>
-                        <span className="animate-spin h-5 w-5 mr-3" />
+                      <div className="flex items-center">
+                        <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
                         Saving...
                       </div>
                     ) : (
-                      "Save Changes"
+                      "Save"
                     )}
                   </Button>
                 </div>

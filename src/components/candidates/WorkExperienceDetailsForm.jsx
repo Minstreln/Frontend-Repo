@@ -19,10 +19,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { typeOfRole } from "../../lib/constants";
+import { jobLocationTypes, typeOfRole } from "../../lib/constants";
 import { Textarea } from "../ui/textarea";
+import toast from "react-hot-toast";
+import useAuth from "../../hooks/useAuth";
+import axios from "axios";
+import { useState } from "react";
 
 const WorkExperienceDetailsForm = () => {
+  const [open, setOpen] = useState(false);
+  const { auth } = useAuth();
   const {
     control,
     register,
@@ -41,12 +47,32 @@ const WorkExperienceDetailsForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(
+        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/experience",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${auth}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        toast.success("Work experience added successfully");
+        reset();
+        setOpen(false);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error adding work experience:", error);
+    }
   };
+
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             className="text-white bg-primary font-semibold"
@@ -64,7 +90,7 @@ const WorkExperienceDetailsForm = () => {
           </DialogHeader>
           <div className="flex flex-col gap-6 py-5">
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-5 overflow-y-scroll max-h-[400px] scrollbar-hide">
+              <div className="flex flex-col gap-5 overflow-y-scroll max-h-[400px]">
                 <div className="w-full flex flex-col gap-2">
                   <Label
                     htmlFor="company"
@@ -113,7 +139,7 @@ const WorkExperienceDetailsForm = () => {
                   <Controller
                     name="typeOfRole"
                     control={control}
-                    rules={{ required: "Type Of Role" }}
+                    rules={{ required: true }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -150,18 +176,40 @@ const WorkExperienceDetailsForm = () => {
                     htmlFor="location"
                     className="text-gray-900 text-[16px]"
                   >
-                    Location
+                    Job Location
                   </Label>
-                  <Input
-                    type="text"
-                    id="location"
-                    placeholder="Location"
-                    {...register("location", { required: true })}
-                    className="focus-visible:ring-0 !py-5"
+                  <Controller
+                    name="location"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="py-5">
+                          <SelectValue placeholder="Select job location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Select job location</SelectLabel>
+                            {jobLocationTypes.map((item) => (
+                              <SelectItem
+                                key={item.value}
+                                value={item.value}
+                                className="cursor-pointer"
+                              >
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                   {errors.location && (
                     <span className="text-red-500 text-sm">
-                      Location is required
+                      Job Location is required
                     </span>
                   )}
                 </div>
@@ -191,7 +239,7 @@ const WorkExperienceDetailsForm = () => {
                     htmlFor="duration"
                     className="text-gray-900 text-[16px]"
                   >
-                    Duration
+                    Duration (in years)
                   </Label>
                   <Input
                     type="number"
@@ -203,6 +251,7 @@ const WorkExperienceDetailsForm = () => {
                         value: 0,
                         message: "Duration must be a positive number",
                       },
+                      valueAsNumber: true,
                     })}
                     className="focus-visible:ring-0 !py-5"
                   />
@@ -249,10 +298,11 @@ const WorkExperienceDetailsForm = () => {
                     type="submit"
                     size="lg"
                     className="font-semibold"
+                    disabled={isSubmitting}
                   >
                     {isSubmitting ? (
-                      <div>
-                        <span className="animate-spin h-5 w-5 mr-3" />
+                      <div className="flex items-center">
+                        <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
                         Saving...
                       </div>
                     ) : (

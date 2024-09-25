@@ -20,14 +20,14 @@ import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
 import { ArrowRight } from "lucide-react";
 
-const ApplyJob = ({ job }) => {
+const ApplyJob = ({ job, size = "lg" }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           className="text-white bg-primary font-semibold"
           variant="contained"
-          size="lg"
+          size={size}
         >
           Apply Now <ArrowRight className="h-5 w-5 ml-2" />
         </Button>

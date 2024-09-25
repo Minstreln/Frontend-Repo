@@ -31,7 +31,7 @@ export const navItems = [
 export const candidatesSidebarNavItems = [
   { name: "Overview", icon: LayoutDashboard, href: "" },
   { name: "Applied Jobs", icon: Briefcase, href: "applied-jobs" },
-  { name: "Favorite Jobs", icon: BookmarkCheck, href: "favorite-jobs" },
+  { name: "Saved Jobs", icon: BookmarkCheck, href: "saved-jobs" },
   { name: "Settings", icon: Settings, href: "settings" },
 ];
 

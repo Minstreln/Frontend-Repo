@@ -82,7 +82,7 @@ const Header = () => {
               </div>
               <Button
                 variant="outline"
-                className="text-sm bg-red-600/90 hover:bg-red-600 text-white hover:text-white font-semibold"
+                className="text-sm bg-red-600/90 hover:bg-red-600 text-white hover:text-white font-semibold hidden sm:block"
                 onClick={logout}
               >
                 Log Out

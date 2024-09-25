@@ -4,8 +4,16 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import userImage from "@/assets/user.png";
+import useAuth from "../../hooks/useAuth";
+import { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const PersonalDetailsForm = () => {
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const { auth } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -13,8 +21,7 @@ const PersonalDetailsForm = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      middleName: "",
       profileImage: "",
       location: "",
       aboutMe: "",
@@ -22,14 +29,55 @@ const PersonalDetailsForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file instanceof File) {
+      setPreviewImage(file);
+    } else {
+      setPreviewImage(null);
+    }
   };
+
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("profileImage", data.profileImage[0]);
+      formData.append("middleName", data.middleName);
+      formData.append("location", data.location);
+      formData.append("aboutMe", data.aboutMe);
+      formData.append("linkedAccount", data.linkedAccount);
+
+      const response = await axios.post(
+        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/personal-detail",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        toast.success("Profile added successfully");
+        reset();
+        setPreviewImage(null);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error updating profile:", error);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-5">
         <div className="w-full flex flex-row gap-5 items-end justify-start">
-          <img src={userImage} alt="User Image" className="w-40 h-40" />
+          <img
+            src={previewImage ? previewImage : userImage}
+            alt="profile image"
+            className="w-40 h-40 object-cover"
+          />
           <div className="w-full max-w-sm flex flex-col gap-2 pb-4">
             <Label htmlFor="profileImage" className="text-gray-900 text-[16px]">
               Profile Image
@@ -37,52 +85,32 @@ const PersonalDetailsForm = () => {
             <Input
               type="file"
               id="profileImage"
-              {...register("profileImage", { required: true })}
+              accept="image/*"
+              onChange={handleImageChange}
+              {...register("profileImage")}
               className="focus-visible:ring-0"
             />
-            {errors.profileImage && (
-              <span className="text-red-500 text-sm">
-                Profile Image is required
-              </span>
-            )}
           </div>
         </div>
-        <div className="w-full flex flex-col md:flex-row gap-5">
-          <div className="w-full flex flex-col gap-2">
-            <Label htmlFor="firstName" className="text-gray-900 text-[16px]">
-              First Name
-            </Label>
-            <Input
-              type="text"
-              id="firstName"
-              placeholder="First Name"
-              {...register("firstName", { required: true })}
-              className="focus-visible:ring-0 !py-5"
-            />
-            {errors.firstName && (
-              <span className="text-red-500 text-sm">
-                First Name is required
-              </span>
-            )}
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <Label htmlFor="lastName" className="text-gray-900 text-[16px]">
-              Last Name
-            </Label>
-            <Input
-              type="text"
-              id="lastName"
-              placeholder="Last Name"
-              {...register("lastName", { required: true })}
-              className="focus-visible:ring-0 !py-5"
-            />
-            {errors.lastName && (
-              <span className="text-red-500 text-sm">
-                Last Name is required
-              </span>
-            )}
-          </div>
+
+        <div className="w-full flex flex-col gap-2">
+          <Label htmlFor="middleName" className="text-gray-900 text-[16px]">
+            Middle Name
+          </Label>
+          <Input
+            type="text"
+            id="middleName"
+            placeholder="Middle Name"
+            {...register("middleName", { required: true })}
+            className="focus-visible:ring-0 !py-5"
+          />
+          {errors.middleName && (
+            <span className="text-red-500 text-sm">
+              Middle Name is required
+            </span>
+          )}
         </div>
+
         <div className="w-full flex flex-col md:flex-row gap-5">
           <div className="w-full flex flex-col gap-2">
             <Label
@@ -141,7 +169,10 @@ const PersonalDetailsForm = () => {
             variant="outline"
             type="reset"
             size="lg"
-            onClick={() => reset()}
+            onClick={() => {
+              reset();
+              setPreviewImage(null);
+            }}
             className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
           >
             Reset
@@ -151,14 +182,15 @@ const PersonalDetailsForm = () => {
             type="submit"
             size="lg"
             className="font-semibold"
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <div>
-                <span className="animate-spin h-5 w-5 mr-3" />
+              <div className="flex items-center">
+                <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
                 Saving...
               </div>
             ) : (
-              "Save Changes"
+              "Save"
             )}
           </Button>
         </div>
