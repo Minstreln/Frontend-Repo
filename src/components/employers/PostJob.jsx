@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 const PostJob = () => {
   const [tag, setTag] = useState([]);
   const[newTag, setNewTag] = useState("")
+
   const [requirements, setRequirements] = useState([]);
   const [newRequirement, setNewRequirement] = useState("");
 
@@ -29,8 +30,6 @@ const PostJob = () => {
     yearsOfExperience: "",
     expirationDate: "",
     jobDescription: "",
-    responsibility: ["Kniw Css", "Know JAvased"],
-    skillsAndQualifications: ["Proficient in React", "Good Communciatim"],
   });
 
   //actual values that will be sent after integration with reuiremnt field and tag field
@@ -47,6 +46,7 @@ const PostJob = () => {
     }
     setTag([...tag, newTag])
     setNewTag("")
+    console.log(tag)
   }
 
   //code to add requirement
@@ -96,6 +96,26 @@ const PostJob = () => {
       const res = await axios.post(url, actualValues, { headers });
       console.log("job added successfully");
       toast.success("Job added successfully!");
+
+      setValues({
+        position: "",
+        hiringCompany: "",
+        employmentType: "full-time",
+        location: "india",
+        minSalary: "",
+        maxSalary: "",
+        jobSetup: "on-site",
+        positionLevel: "Entry level",
+        yearsOfExperience: "",
+        expirationDate: "",
+        jobDescription: "",
+      })
+      setRequirements([])
+      setResponsiblity([])
+      setSkillsAndQualifications([])
+      setTag([])
+
+
       return res.data;
     } catch (err) {
       throw new Error(err.response.data.message || "Registration failed");
@@ -118,6 +138,7 @@ const PostJob = () => {
             <input
               type="text"
               id="company"
+              required
               className="border px-4 py-2 rounded-md"
               placeholder="Add Company"
               value={values.hiringCompany}
@@ -132,6 +153,7 @@ const PostJob = () => {
             <input
               type="text"
               id="jobTitle"
+              required
               className="border px-4 py-2 rounded-md"
               placeholder="Add job title, role, vacancies etc"
               value={values.position}
@@ -169,6 +191,7 @@ const PostJob = () => {
               <select
                 name=""
                 id="jobSetup"
+                required
                 className="border px-4 py-2 rounded-md"
                 value={values.jobSetup}
                 onChange={() =>
@@ -188,6 +211,7 @@ const PostJob = () => {
               <input
                 type="number"
                 id="minSalary"
+                required
                 className="border px-4 py-2 rounded-md"
                 placeholder="Minimun Salary"
                 value={values.minSalary}
@@ -201,6 +225,7 @@ const PostJob = () => {
               <input
                 type="number"
                 id="maxSalary"
+                required
                 className="border px-4 py-2 rounded-md"
                 placeholder="Maximum Salary"
                 value={values.maxSalary}
@@ -243,6 +268,7 @@ const PostJob = () => {
               <input
                 type="number"
                 id="experience"
+                required
                 className="border px-4 py-2 rounded-md"
                 placeholder="Years of Experience"
                 value={values.yearsOfExperience}
@@ -257,6 +283,7 @@ const PostJob = () => {
               <select
                 name=""
                 id="jobType"
+                required
                 className="border px-4 py-2 rounded-md"
                 value={values.employmentType}
                 onChange={() =>
@@ -274,6 +301,7 @@ const PostJob = () => {
               <input
                 type="date"
                 id="expierDate"
+                required
                 className="border px-4 py-2 rounded-md"
                 value={values.expirationDate}
                 onChange={() =>
@@ -287,6 +315,7 @@ const PostJob = () => {
               <select
                 name=""
                 id="jobLevel"
+                required
                 className="border px-4 py-2 rounded-md"
                 value={values.positionLevel}
                 onChange={() =>
@@ -341,6 +370,7 @@ const PostJob = () => {
             <h1 className="mb-4 font-semibold text-[18px]">Job Description</h1>
             <textarea
               className="w-full rounded border px-4 py-2 h-[200px]"
+              required
               value={values.jobDescription}
               onChange={() =>
                 handleInputChange("jobDescription", event.target.value)
