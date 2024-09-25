@@ -10,8 +10,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const ResumeForm = () => {
+  const [open, setOpen] = useState(false);
+
+  const { auth } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -24,12 +32,37 @@ const ResumeForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("resume", data.resume[0]);
+
+      const response = await axios.post(
+        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/resume",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        toast.success("Work experience added successfully");
+        reset();
+        setOpen(false);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error adding work experience:", error);
+    }
   };
+
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             className="text-white bg-primary font-semibold"
@@ -73,6 +106,7 @@ const ResumeForm = () => {
                   <Input
                     type="file"
                     id="resume"
+                    accept=".doc,.docx,.pdf,.txt,.odt"
                     {...register("resume", { required: true })}
                     className="focus-visible:ring-0"
                   />
@@ -98,10 +132,11 @@ const ResumeForm = () => {
                     type="submit"
                     size="lg"
                     className="font-semibold"
+                    disabled={isSubmitting}
                   >
                     {isSubmitting ? (
-                      <div>
-                        <span className="animate-spin h-5 w-5 mr-3" />
+                      <div className="flex items-center">
+                        <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
                         Saving...
                       </div>
                     ) : (

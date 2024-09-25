@@ -17,3 +17,9 @@ export const userRole = {
   jobSeeker: "job seeker",
   employer: "employer",
 };
+
+export const jobLocationTypes = [
+  { label: "Remote", value: "remote" },
+  { label: "On Site", value: "on-site" },
+  { label: "Hybrid", value: "hybrid" },
+];

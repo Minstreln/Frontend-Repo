@@ -11,6 +11,7 @@ import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "../../styles/customTableSyales";
+import { Link } from "react-router-dom";
 
 const CandidateOverview = () => {
   const { user } = useAuth();
@@ -155,13 +156,15 @@ const CandidateOverview = () => {
             </span>
           </div>
         </div>
-        <Button
-          variant="secondary"
-          size="lg"
-          className="font-semibold text-destructive"
-        >
-          Edit Profile <ArrowRight className="h-5 w-5 ml-2" />
-        </Button>
+        <Link to={"/dashboard/settings"}>
+          <Button
+            variant="secondary"
+            size="lg"
+            className="font-semibold text-destructive hover:bg-secondary/90"
+          >
+            Edit Profile <ArrowRight className="h-5 w-5 ml-2" />
+          </Button>
+        </Link>
       </div>
       <div className="w-full flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">

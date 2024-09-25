@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import JobDetails from "./JobDetails";
 import Breadcrumb from "../Breadcrumb";
 import { useSingleJob } from "../../hooks/useSingleJob";
+import Loading from "../Loading";
 
 const JobDetailsWrapper = () => {
   const { jobId } = useParams();
@@ -17,7 +18,7 @@ const JobDetailsWrapper = () => {
       </div>
       {loading ? (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
-          Loading...
+          <Loading />
         </div>
       ) : error ? (
         <div className="wrapper w-full flex items-center text-red-500 font-semibold py-6">

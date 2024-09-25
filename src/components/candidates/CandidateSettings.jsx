@@ -6,8 +6,24 @@ import PersonalDetailsForm from "./PersonalDetailsForm";
 import AcademicDetailsForm from "./AcademicDetailsForm";
 import WorkExperienceDetailsForm from "./WorkExperienceDetailsForm";
 import ResumeForm from "./ResumeForm";
+import { useJobSeekerPersonalDetails } from "../../hooks/useJobSeekerPersonalDetails";
+import Loading from "../Loading";
+import PersonalDetails from "./PersonalDetails";
+import { useJobSeekerAcademicDetails } from "../../hooks/useJobSeekerAcademicDetails";
+import AcademicDetails from "./AcademicDetails";
 const CandidateSettings = () => {
   const [activeTab, setActiveTab] = useState("personal");
+
+  const { personalDetails, loading, error, refetch } =
+    useJobSeekerPersonalDetails();
+  const {
+    academicDetails,
+    loading: academicLoading,
+    error: academicError,
+    refetch: academicRefetch,
+    deleteAcademicDetail,
+  } = useJobSeekerAcademicDetails();
+
   return (
     <div className="w-full flex flex-col gap-8">
       <h2 className="text-lg text-gray-800 font-semibold">Settings</h2>
@@ -64,20 +80,60 @@ const CandidateSettings = () => {
           <div className="w-full flex flex-col gap-5">
             <h3 className="text-gray-900 pb-2">Personal Details</h3>
             <div className="w-full">
-              <PersonalDetailsForm />
+              {loading && (
+                <div className="py-6">
+                  <Loading />
+                </div>
+              )}
+
+              {error && (
+                <div className="w-full flex items-center text-red-500 font-semibold py-6">
+                  Error: {error}
+                </div>
+              )}
+
+              {!loading && !error && !personalDetails && (
+                <PersonalDetailsForm />
+              )}
+
+              {!loading && !error && personalDetails && (
+                <PersonalDetails
+                  personalDetails={personalDetails}
+                  refetch={refetch}
+                />
+              )}
             </div>
           </div>
         </TabsContent>
         <TabsContent value="academic" className="w-full">
           <div className="w-full flex flex-col gap-5">
-            <h3 className="text-gray-900 pb-2">Academic Details</h3>
+            <h3 className="text-gray-900 pb-2">Education</h3>
             <div className="w-full">
-              <div className="w-full flex flex-col items-center justify-between py-8">
-                <span className="text-gray-600 text-lg">
-                  No academic details added yet
-                </span>
-              </div>
-              <AcademicDetailsForm />
+              {academicLoading && (
+                <div className="py-6">
+                  <Loading />
+                </div>
+              )}
+              {academicError && (
+                <div className="w-full flex items-center text-red-500 font-semibold py-6">
+                  Error: {error}
+                </div>
+              )}
+
+              {!academicLoading && !academicError && !academicDetails && (
+                <AcademicDetailsForm />
+              )}
+
+              {!academicLoading && !academicError && academicDetails && (
+                <div className="w-full space-y-5">
+                  <AcademicDetails
+                    academicDetails={academicDetails}
+                    refetch={academicRefetch}
+                    deleteAcademicDetail={deleteAcademicDetail}
+                  />
+                  <AcademicDetailsForm refetch={academicRefetch} />
+                </div>
+              )}
             </div>
           </div>
         </TabsContent>

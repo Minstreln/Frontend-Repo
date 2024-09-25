@@ -1,13 +1,14 @@
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "../../styles/customTableSyales";
-import { Check, RefreshCw } from "lucide-react";
 import { Button } from "../ui/button";
-import { useAppliedJobs } from "../../hooks/useAppliedJobs";
+import { Bookmark, RefreshCw } from "lucide-react";
+import { useSavedJobs } from "../../hooks/useSavedJobs";
+import ApplyJob from "../find-job/ApplyJob";
 import Loading from "../Loading";
 
-const AppliedJobs = () => {
-  const { appliedJobs, loading, error, numberOfAppliedJobs, refetch } =
-    useAppliedJobs();
+const SavedJobs = () => {
+  const { savedJobs, loading, error, refetch, numberOfSavedJobs } =
+    useSavedJobs();
 
   const columns = [
     {
@@ -25,13 +26,13 @@ const AppliedJobs = () => {
           </div>
           <div className="flex flex-col gap-1 ml-4">
             <div className="text-sm font-medium text-gray-900">
-              <span>{row.jobListing.position}</span>
-              <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-primary/10 text-primary ml-2">
-                {row.jobListing.jobSetup}
+              <span>{row.position}</span>
+              <span className="px-2 py-[2px] text-xs font-semibold rounded-lg bg-primary/10 text-primary ml-2">
+                {row.employmentType}
               </span>
             </div>
-            <div className="text-xs text-gray-500">
-              {row.jobListing.location} • {row.jobListing.positionLevel}
+            <div className="text-xs text-gray-500 flex items-center gap-5">
+              <span>{row.location}</span> <span>{row.salary}</span>
             </div>
           </div>
         </div>
@@ -39,33 +40,15 @@ const AppliedJobs = () => {
       grow: 2,
     },
     {
-      name: "Date Applied",
-      selector: (row) => new Date(row.createdAt).toDateString(),
-      sortable: true,
-    },
-    {
-      name: "Status",
-      selector: (row) => row.status,
-      cell: (row) => (
-        <div className="flex items-center gap-1">
-          <Check className="h-4 w-4 text-green-500" />
-          <span className="text-green-500">{row.status}</span>
-        </div>
-      ),
-    },
-    {
       name: "Action",
-      cell: () => (
-        <Button
-          variant="secondary"
-          size="sm"
-          className="text-primary font-semibold hover:bg-primary hover:text-primary-foreground"
-        >
-          View Details
-        </Button>
+      cell: (row) => (
+        <>
+          <Bookmark className="h-6 w-6 text-primary fill-primary mr-2" />
+          <ApplyJob job={row} size="sm" />
+        </>
       ),
       button: true,
-      width: "120px",
+      width: "180px",
     },
   ];
 
@@ -73,8 +56,8 @@ const AppliedJobs = () => {
     <div className="w-full flex flex-col gap-5">
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-1">
-          <h2 className="text-lg text-gray-800 font-semibold">Applied Jobs</h2>
-          <span className="text-sm text-gray-600">({numberOfAppliedJobs})</span>
+          <h2 className="text-lg text-gray-800 font-semibold">Saved Jobs</h2>
+          <span className="text-sm text-gray-600">({numberOfSavedJobs})</span>
         </div>
         <Button
           variant="default"
@@ -97,24 +80,25 @@ const AppliedJobs = () => {
         </div>
       )}
 
-      {!loading && !error && appliedJobs.length === 0 && (
+      {!loading && !error && savedJobs.length === 0 && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           No jobs found
         </div>
       )}
-      {!loading && !error && appliedJobs && appliedJobs.length > 0 && (
+
+      {!loading && !error && savedJobs.length > 0 && (
         <DataTable
           columns={columns}
-          data={appliedJobs}
+          data={savedJobs}
           customStyles={customTableStyles}
           pagination
-          paginationPerPage={10}
+          paginationPerPage={5}
           paginationRowsPerPageOptions={[10, 15, 20]}
-          noHeader
+          noHeader={true}
         />
       )}
     </div>
   );
 };
 
-export default AppliedJobs;
+export default SavedJobs;

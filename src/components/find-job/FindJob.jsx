@@ -6,6 +6,7 @@ import { JOBS_PER_PAGE } from "../../lib/constants";
 import { Link } from "react-router-dom";
 import { useAllJobs } from "../../hooks/useAllJobs";
 import { useMemo, useState } from "react";
+import Loading from "../Loading";
 
 const FindJob = () => {
   const { jobs, loading, error } = useAllJobs();
@@ -34,7 +35,7 @@ const FindJob = () => {
       </div>
       {loading && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
-          Loading...
+          <Loading />
         </div>
       )}
 
