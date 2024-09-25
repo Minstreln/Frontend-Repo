@@ -13,7 +13,7 @@ const HowItWorks = () => {
     >
       <div className="wrapper flex flex-row items-start justify-center">
         <h1 className="m-0 relative text-inherit leading-[48px] font-medium font-[inherit] text-4xl">
-          How jobpilot work
+          How Lysterpro works
         </h1>
       </div>
       <div className="wrapper flex flex-row items-start justify-center flex-wrap content-start gap-6 text-lg">

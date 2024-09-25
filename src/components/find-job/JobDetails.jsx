@@ -13,9 +13,12 @@ import {
 } from "lucide-react";
 import ApplyJob from "./ApplyJob";
 import { useSaveJob } from "../../hooks/useSaveJob";
+import useAuth from "../../hooks/useAuth";
+import { userRole } from "../../lib/constants";
 
 const JobDetails = ({ job }) => {
   const { saveJob, loading, success } = useSaveJob();
+  const { user } = useAuth();
 
   const handleSaveJob = async (e) => {
     e.preventDefault(); // Prevent the Link component from navigating
@@ -48,21 +51,23 @@ const JobDetails = ({ job }) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-row items-center justify-end gap-2">
-          <Button
-            variant="ghost"
-            onClick={handleSaveJob}
-            disabled={loading || success}
-            className="rounded bg-primary/10 flex flex-row items-center justify-center p-3"
-          >
-            <Bookmark
-              className={`${
-                success ? "fill-primary" : ""
-              } h-6 w-6 text-primary `}
-            />
-          </Button>
-          <ApplyJob job={job} />
-        </div>
+        {user?.role === userRole.jobSeeker && (
+          <div className="flex flex-row items-center justify-end gap-2">
+            <Button
+              variant="ghost"
+              onClick={handleSaveJob}
+              disabled={loading || success}
+              className="rounded bg-primary/10 flex flex-row items-center justify-center p-3"
+            >
+              <Bookmark
+                className={`${
+                  success ? "fill-primary" : ""
+                } h-6 w-6 text-primary `}
+              />
+            </Button>
+            <ApplyJob job={job} />
+          </div>
+        )}
       </div>
       <div className="w-full flex flex-col gap-5 sm:flex-row">
         <div className="sm:flex-[2] flex flex-col gap-3 text-gray-400 leading-[24px] text-lg">
@@ -93,22 +98,23 @@ const JobDetails = ({ job }) => {
               <li key={item}>{item}</li>
             ))}
           </ol>
-
-          <div className="flex flex-row items-center justify-start gap-2 py-8">
-            <Button
-              variant="ghost"
-              onClick={handleSaveJob}
-              disabled={loading || success}
-              className="rounded bg-primary/10 flex flex-row items-center justify-center p-3"
-            >
-              <Bookmark
-                className={`${
-                  success ? "fill-primary" : ""
-                } h-6 w-6 text-primary `}
-              />
-            </Button>
-            <ApplyJob job={job} />
-          </div>
+          {user?.role === userRole.jobSeeker && (
+            <div className="flex flex-row items-center justify-start gap-2 py-8">
+              <Button
+                variant="ghost"
+                onClick={handleSaveJob}
+                disabled={loading || success}
+                className="rounded bg-primary/10 flex flex-row items-center justify-center p-3"
+              >
+                <Bookmark
+                  className={`${
+                    success ? "fill-primary" : ""
+                  } h-6 w-6 text-primary `}
+                />
+              </Button>
+              <ApplyJob job={job} />
+            </div>
+          )}
         </div>
 
         <div className="flex-1 flex flex-col gap-5">

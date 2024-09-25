@@ -24,7 +24,6 @@ import EmployerProfile from "./components/employers/EmployerProfile.jsx";
 import PostJob from "./components/employers/PostJob.jsx";
 import MyJobs from "./components/employers/MyJobs.jsx";
 import SavedCandidates from "./components/employers/SavedCandidates.jsx";
-import AllCompanies from "./components/employers/AllCompanies.jsx";
 import ProtectedRoutes from "./routes/ProtectedRoutes.jsx";
 
 const router = createBrowserRouter([
@@ -103,10 +102,6 @@ const router = createBrowserRouter([
               {
                 path: "saved-candidates",
                 element: <SavedCandidates />,
-              },
-              {
-                path: "all-companies",
-                element: <AllCompanies />,
               },
             ],
           },

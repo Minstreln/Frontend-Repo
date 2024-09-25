@@ -3,7 +3,6 @@ import {
   Briefcase,
   BriefcaseBusiness,
   BriefcaseIcon,
-  Building,
   LayoutDashboard,
   Settings,
   UserCircleIcon,
@@ -17,14 +16,6 @@ export const navItems = [
   {
     name: "Find Job",
     path: "/find-job",
-  },
-  {
-    name: "Find Employers",
-    path: "/find-employers",
-  },
-  {
-    name: "Candidates",
-    path: "/candidates",
   },
 ];
 
@@ -49,6 +40,5 @@ export const employersSidebarNavItems = [
     icon: BookmarkCheck,
     href: "saved-candidates",
   },
-  { name: "All Companies", icon: Building, href: "all-companies" },
   { name: "Settings", icon: Settings, href: "settings" },
 ];

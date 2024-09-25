@@ -17,10 +17,11 @@ import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { userRole } from "../../lib/constants";
 
 const ApplyJob = ({ job, size = "lg" }) => {
   const [open, setOpen] = useState(false);
-  const { auth } = useAuth();
+  const { auth, user } = useAuth();
 
   const {
     register,
@@ -35,6 +36,10 @@ const ApplyJob = ({ job, size = "lg" }) => {
 
   const onSubmit = async (data) => {
     try {
+      if (!auth) {
+        toast.error("Please signin to apply");
+        return;
+      }
       const formData = { ...data, jobListing: job._id };
       const response = await axios.post(
         "https://lysterpro-backend.onrender.com/api/v1/applications/create",
@@ -60,13 +65,15 @@ const ApplyJob = ({ job, size = "lg" }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="text-white bg-primary font-semibold"
-          variant="contained"
-          size={size}
-        >
-          Apply Now <ArrowRight className="h-5 w-5 ml-2" />
-        </Button>
+        {user.role === userRole.jobSeeker && (
+          <Button
+            className="text-white bg-primary font-semibold"
+            variant="contained"
+            size={size}
+          >
+            Apply Now <ArrowRight className="h-5 w-5 ml-2" />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="bg-white">
         <DialogHeader>

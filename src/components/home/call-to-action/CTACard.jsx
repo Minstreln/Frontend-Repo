@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { Button } from "../../ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CTACard = ({ propColor, image, title, description }) => {
   const becomeACandidateStyle = useMemo(() => {
@@ -30,15 +31,17 @@ const CTACard = ({ propColor, image, title, description }) => {
           {description}
         </div>
       </div>
-      <Button
-        className="w-48 h-12 z-10 text-primary bg-white hover:bg-gray-100 transition-all"
-        variant="contained"
-      >
-        Register now
-        <span>
-          <ArrowRight className="h-4 w-6 mr-3 text-primary" />
-        </span>
-      </Button>
+      <Link to={"/signup"} className="z-10">
+        <Button
+          className="w-48 h-12 text-primary bg-white hover:bg-gray-100 transition-all"
+          variant="contained"
+        >
+          Register now
+          <span>
+            <ArrowRight className="h-4 w-6 mr-3 text-primary" />
+          </span>
+        </Button>
+      </Link>
     </div>
   );
 };
