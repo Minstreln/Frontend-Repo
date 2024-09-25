@@ -27,7 +27,7 @@ const JobCard = ({
               {employmentType}
             </div>
           </div>
-          <div className="relative leading-[20px]">Salary: {salary}</div>
+          <div className="relative leading-[20px]">Salary:${salary}</div>
         </div>
       </div>
       <div className="self-stretch flex flex-row items-center justify-center gap-3 text-base mq450:flex-wrap">

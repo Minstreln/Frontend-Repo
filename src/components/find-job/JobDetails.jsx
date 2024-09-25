@@ -68,15 +68,12 @@ const JobDetails = ({ job }) => {
         <div className="sm:flex-[2] flex flex-col gap-3 text-gray-400 leading-[24px] text-lg">
           <p className="text-gray-900  font-medium pb-2">Job Description</p>
           <p>{job.jobDescription}</p>
-          <p>Want to work with us? You&apos;re in good company!</p>
 
           <p className="text-gray-900  font-medium pb-2">Responsibilities:</p>
           <ol className="list-disc pl-8 flex flex-col gap-2">
             {job.responsibility.map((res) => (
               <li key={res}>{res}</li>
             ))}
-            <li>Working knowledge of payment gateways</li>
-            <li>API platform experience / Building restful APIs</li>
           </ol>
           <p className="text-gray-900  font-medium pb-2">Requirements:</p>
           <ol className="list-disc pl-8 flex flex-col gap-2">
@@ -116,7 +113,7 @@ const JobDetails = ({ job }) => {
             <div className="w-full flex flex-col items-center justify-center gap-1 text-gray-600">
               <span className="text-gray-900 font-semibold">Salary(USD)</span>
               <span className="text-[#0BA02C] font-semibold text-lg">
-                {job.salary}
+                ${job.minSalary}
               </span>
               <span className="text-sm">Yearly salary</span>
             </div>
@@ -184,7 +181,7 @@ const JobDetails = ({ job }) => {
                       EDUCATION
                     </span>
                     <span className="text-gray-900 font-medium">
-                      Graduation
+                      {job.education || "Graduate"}
                     </span>
                   </div>
                 </div>
