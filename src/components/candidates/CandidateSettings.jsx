@@ -11,6 +11,8 @@ import Loading from "../Loading";
 import PersonalDetails from "./PersonalDetails";
 import { useJobSeekerAcademicDetails } from "../../hooks/useJobSeekerAcademicDetails";
 import AcademicDetails from "./AcademicDetails";
+import { useJobSeekerWorkExperience } from "../../hooks/useJobSeekerWorkExperience";
+import WorkExperienceDetails from "./WorkExperienceDetails";
 const CandidateSettings = () => {
   const [activeTab, setActiveTab] = useState("personal");
 
@@ -23,6 +25,14 @@ const CandidateSettings = () => {
     refetch: academicRefetch,
     deleteAcademicDetail,
   } = useJobSeekerAcademicDetails();
+
+  const {
+    workExperience,
+    loading: experienceLoading,
+    error: experienceError,
+    refetch: experienceRefetch,
+    deleteWorkExperience,
+  } = useJobSeekerWorkExperience();
 
   return (
     <div className="w-full flex flex-col gap-8">
@@ -141,12 +151,31 @@ const CandidateSettings = () => {
           <div className="w-full flex flex-col gap-5">
             <h3 className="text-gray-900 pb-2">Work Experience</h3>
             <div className="w-full">
-              <div className="w-full flex flex-col items-center justify-between py-8">
-                <span className="text-gray-600 text-lg">
-                  No work experience details added yet
-                </span>
-              </div>
-              <WorkExperienceDetailsForm />
+              {experienceLoading && (
+                <div className="py-6">
+                  <Loading />
+                </div>
+              )}
+              {experienceError && (
+                <div className="w-full flex items-center text-red-500 font-semibold py-6">
+                  Error: {error}
+                </div>
+              )}
+
+              {!experienceLoading && !experienceError && !workExperience && (
+                <WorkExperienceDetailsForm />
+              )}
+
+              {!experienceLoading && !experienceError && workExperience && (
+                <div className="w-full space-y-5">
+                  <WorkExperienceDetails
+                    workExperience={workExperience}
+                    refetch={experienceRefetch}
+                    deleteWorkExperience={deleteWorkExperience}
+                  />
+                  <WorkExperienceDetailsForm refetch={experienceRefetch} />
+                </div>
+              )}
             </div>
           </div>
         </TabsContent>

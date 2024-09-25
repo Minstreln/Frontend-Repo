@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -20,13 +21,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { jobLocationTypes, typeOfRole } from "../../lib/constants";
-import { Textarea } from "../ui/textarea";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { useState } from "react";
 
-const WorkExperienceDetailsForm = () => {
+const WorkExperienceDetailsForm = ({ refetch }) => {
   const [open, setOpen] = useState(false);
   const { auth } = useAuth();
   const {
@@ -63,6 +63,7 @@ const WorkExperienceDetailsForm = () => {
         toast.success("Work experience added successfully");
         reset();
         setOpen(false);
+        refetch();
       }
     } catch (error) {
       toast.error(error.message);
@@ -261,26 +262,6 @@ const WorkExperienceDetailsForm = () => {
                     </span>
                   )}
                 </div>
-                <div className="w-full flex flex-col gap-2">
-                  <Label
-                    htmlFor="description"
-                    className="text-gray-900 text-[16px]"
-                  >
-                    Description
-                  </Label>
-                  <Textarea
-                    placeholder="Type job description here..."
-                    id="description"
-                    {...register("description", { required: true })}
-                    className="focus-visible:ring-0 !py-5"
-                    rows={5}
-                  />
-                  {errors.description && (
-                    <span className="text-red-500 text-sm">
-                      Description is required
-                    </span>
-                  )}
-                </div>
               </div>
               <DialogFooter>
                 <div className="w-full flex flex-row items-center gap-2 justify-between pt-8">
@@ -306,7 +287,7 @@ const WorkExperienceDetailsForm = () => {
                         Saving...
                       </div>
                     ) : (
-                      "Save Changes"
+                      "Save"
                     )}
                   </Button>
                 </div>
