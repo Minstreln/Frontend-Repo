@@ -30,6 +30,7 @@ const PostJob = () => {
     yearsOfExperience: "",
     expirationDate: "",
     jobDescription: "",
+    education:"graduate"
   });
 
   //actual values that will be sent after integration with reuiremnt field and tag field
@@ -109,6 +110,7 @@ const PostJob = () => {
         yearsOfExperience: "",
         expirationDate: "",
         jobDescription: "",
+        education:"graduate",
       })
       setRequirements([])
       setResponsiblity([])
@@ -256,6 +258,10 @@ const PostJob = () => {
               <select
                 name=""
                 id="education"
+                value={values.education}
+                onChange={() =>
+                  handleInputChange("education", event.target.value)
+                }
                 className="border px-4 py-2 rounded-md"
               >
                 <option value="graduate">Graduate</option>
@@ -410,7 +416,7 @@ const PostJob = () => {
             <label htmlFor="responsibility" className="mb-3">
               Job Requirements:
             </label>
-            <ul className="list-disc">
+            <ul className="list-disc mt-3">
               {responsibility.map((responsibility, index) => (
                 <li key={index}>{responsibility}</li>
               ))}
@@ -434,9 +440,9 @@ const PostJob = () => {
 
           <div className="mb-10">
             <label htmlFor="skills" className="mb-3">
-              Job Requirements:
+              Skills and Qualifications:
             </label>
-            <ul className="list-disc">
+            <ul className="list-disc mt-3">
               {skillsAndQualifications.map((skills, index) => (
                 <li key={index}>{skills}</li>
               ))}

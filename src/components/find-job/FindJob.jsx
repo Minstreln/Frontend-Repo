@@ -61,7 +61,7 @@ const FindJob = () => {
                   <JobCard
                     position={job.position}
                     employmentType={job.employmentType}
-                    salary={job.salary}
+                    salary={job.minSalary}
                     hiringCompany={job.hiringCompany}
                     companyLocation={job.location}
                   />
