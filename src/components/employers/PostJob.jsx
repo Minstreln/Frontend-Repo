@@ -4,21 +4,21 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const PostJob = () => {
-  const [tag, setTag] = useState("");
+  const [tag, setTag] = useState([]);
+  const[newTag, setNewTag] = useState("")
   const [requirements, setRequirements] = useState([]);
   const [newRequirement, setNewRequirement] = useState("");
 
   const [responsibility, setResponsiblity] = useState([]);
   const [newResponsibility, setNewResponsibility] = useState("");
 
-  const [ skillsAndQualifications, setSkillsAndQualifications] = useState([]);
+  const [skillsAndQualifications, setSkillsAndQualifications] = useState([]);
   const [newSkills, setNewSkills] = useState("");
 
   const token = localStorage.getItem("token");
 
   const [values, setValues] = useState({
     position: "",
-    tags:["for"],
     hiringCompany: "",
     employmentType: "full-time",
     location: "india",
@@ -34,40 +34,56 @@ const PostJob = () => {
   });
 
   //actual values that will be sent after integration with reuiremnt field and tag field
-  const actualValues = {...values, requirements, responsibility,skillsAndQualifications}
-
-  // const arrayTag = tag.split(",");// code to convert tag to array
+  let actualValues = {
+    ...values,
+    requirements,
+    responsibility,
+    skillsAndQualifications,
+    tag,
+  };
+  const handleAddTag = ()=> {
+    if(newTag ==""){
+      return
+    }
+    setTag([...tag, newTag])
+    setNewTag("")
+  }
 
   //code to add requirement
   const handleAddRequirement = () => {
-    if(newRequirement == ""){
-      return
+    if (newRequirement == "") {
+      return;
     }
     setRequirements([...requirements, newRequirement]);
     setNewRequirement("");
   };
 
   const handleAddResponsibilty = () => {
-    if(newResponsibility == ""){
-      return
-    }
-    else{
+    if (newResponsibility == "") {
+      return;
+    } else {
       setResponsiblity([...responsibility, newResponsibility]);
-    setNewResponsibility("");
+      setNewResponsibility("");
     }
   };
 
   const handleAddSkills = () => {
-    if(newSkills == ""){
-      return
+    if (newSkills == "") {
+      return;
     }
     setSkillsAndQualifications([...skillsAndQualifications, newSkills]);
     setNewSkills("");
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    actualValues = {
+      ...values,
+      requirements,
+      responsibility,
+      skillsAndQualifications,
+      tag,
+    };
 
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -125,14 +141,28 @@ const PostJob = () => {
           <div className="grid grid-cols-3 gap-2 mb-7">
             <div className="col-span-2 flex flex-col gap-2">
               <label htmlFor="keyword">Tags</label>
-              <input
-                type="text"
-                id="keyword"
-                value={tag}
-                onChange={(e) => setTag(e.target.value)}
-                className="border px-4 py-2 rounded-md"
-                placeholder="Eg. UI, UX, Web Dev"
-              />
+              <ul className="list-disc">
+                  {tag.map((tags, index) => (
+                    <li key={index}>{tags}</li>
+                  ))}
+                </ul>
+              <div>
+                <input
+                  type="text"
+                  id="keyword"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  className="border w-full mb-3 px-4 py-2 rounded-md"
+                  placeholder="Eg. UI, UX, Web Dev"
+                />
+                <button
+                  type="button"
+                  className="text-white block bg-primary px-5 py-2 rounded"
+                  onClick={handleAddTag}
+                >
+                  Add Tags
+                </button>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="jobSetup">Job SetUp</label>
@@ -321,7 +351,9 @@ const PostJob = () => {
           </div>
 
           <div className="mb-10">
-            <label htmlFor="requirement" className="mb-3">Job Requirements:</label>
+            <label htmlFor="requirement" className="mb-3">
+              Job Requirements:
+            </label>
             <ul className="list-disc">
               {requirements.map((requirement, index) => (
                 <li key={index}>{requirement}</li>
@@ -335,11 +367,19 @@ const PostJob = () => {
               onChange={(e) => setNewRequirement(e.target.value)}
               placeholder="Add requirement"
             />
-            <button type="button" className="text-white block bg-primary px-5 py-2 rounded" onClick={handleAddRequirement}>Add Requirement</button>
+            <button
+              type="button"
+              className="text-white block bg-primary px-5 py-2 rounded"
+              onClick={handleAddRequirement}
+            >
+              Add Requirement
+            </button>
           </div>
 
           <div className="mb-10">
-            <label htmlFor="responsibility" className="mb-3">Job Requirements:</label>
+            <label htmlFor="responsibility" className="mb-3">
+              Job Requirements:
+            </label>
             <ul className="list-disc">
               {responsibility.map((responsibility, index) => (
                 <li key={index}>{responsibility}</li>
@@ -353,11 +393,19 @@ const PostJob = () => {
               onChange={(e) => setNewResponsibility(e.target.value)}
               placeholder="Add responsibity"
             />
-            <button type="button" className="text-white block bg-primary px-5 py-2 rounded" onClick={handleAddResponsibilty}>Add Responsibility</button>
+            <button
+              type="button"
+              className="text-white block bg-primary px-5 py-2 rounded"
+              onClick={handleAddResponsibilty}
+            >
+              Add Responsibility
+            </button>
           </div>
 
           <div className="mb-10">
-            <label htmlFor="skills" className="mb-3">Job Requirements:</label>
+            <label htmlFor="skills" className="mb-3">
+              Job Requirements:
+            </label>
             <ul className="list-disc">
               {skillsAndQualifications.map((skills, index) => (
                 <li key={index}>{skills}</li>
@@ -371,7 +419,13 @@ const PostJob = () => {
               onChange={(e) => setNewSkills(e.target.value)}
               placeholder="Add Skills and Qualifications"
             />
-            <button type="button" className="text-white block bg-primary px-5 py-2 rounded" onClick={handleAddSkills}>Add Skills</button>
+            <button
+              type="button"
+              className="text-white block bg-primary px-5 py-2 rounded"
+              onClick={handleAddSkills}
+            >
+              Add Skills
+            </button>
           </div>
 
           <button className="text-white block bg-primary px-5 py-2 rounded">
