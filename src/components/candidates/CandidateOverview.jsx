@@ -36,13 +36,13 @@ const CandidateOverview = () => {
           </div>
           <div className="flex flex-col gap-1 ml-4">
             <div className="text-sm font-medium text-gray-900">
-              <span>{row.jobListing.position}</span>
+              <span>{row.jobListing?.position}</span>
               <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-primary/10 text-primary ml-2">
-                {row.jobListing.jobSetup}
+                {row.jobListing?.jobSetup}
               </span>
             </div>
             <div className="text-xs text-gray-500">
-              {row.jobListing.location} • {row.jobListing.positionLevel}
+              {row.jobListing?.location} • {row.jobListing?.positionLevel}
             </div>
           </div>
         </div>
