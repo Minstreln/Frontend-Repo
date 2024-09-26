@@ -27,7 +27,7 @@ const MobileSidebarNav = () => {
         side="right"
         className="w-[300px] sm:w-[400px] bg-primary-foreground text-gray-600"
       >
-        {user.role === userRole.jobSeeker ? (
+        {user?.role === userRole.jobSeeker ? (
           <SidebarNav
             title={"Candidate Dashboard"}
             activeItem={currentPage}

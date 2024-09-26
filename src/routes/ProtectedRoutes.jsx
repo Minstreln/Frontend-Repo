@@ -1,24 +1,26 @@
-import { useEffect } from "react";
-import { Outlet, Navigate, useLocation } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+/* eslint-disable react/prop-types */
 
-const ProtectedRoutes = () => {
-  const { isAuthenticated } = useAuth();
+import { Navigate, useLocation } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import Loading from "../components/Loading";
+
+const ProtectedRoutes = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  useEffect(() => {
-    console.log("Auth status:", isAuthenticated);
-  }, [isAuthenticated]);
-
-  if (isAuthenticated === null) {
-    return <div className="wrapper text-gray-600 text-lg py-8">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="w-full flex items-center justify-center py-6">
+        <Loading />
+      </div>
+    );
   }
 
-  return isAuthenticated ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/signin" state={{ from: location }} replace />
-  );
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" state={{ path: location.pathname }} />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoutes;

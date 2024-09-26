@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   IconArrowRight,
   IconEye,
@@ -18,6 +18,9 @@ const SignIn = () => {
   const [pwdIsInvalid, setPwdIsInvalid] = useState(false); //state for password validation
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath = location.state?.path || "/";
 
   function DisplayPassword() {
     if (pwd.current.type == "password") {
@@ -51,7 +54,7 @@ const SignIn = () => {
 
       if (response.status === "success") {
         toast.success("Login successful!");
-        navigate(location.state?.from || "/dashboard");
+        navigate(redirectPath, { replace: true });
       }
     } catch (err) {
       toast.error(err.message);

@@ -1,10 +1,11 @@
-import { Outlet } from "react-router-dom";
+/* eslint-disable react/prop-types */
+
 import SidebarNav from "../SidebarNav";
 import { employersSidebarNavItems } from "../../lib/navItems";
 import useCurrentPage from "../../hooks/useCurrentPage";
 import MobileSidebarNav from "../MobileSidebarNav";
 
-const EmployersDashboard = () => {
+const EmployersDashboard = ({ children }) => {
   const { currentPage } = useCurrentPage();
 
   return (
@@ -21,7 +22,7 @@ const EmployersDashboard = () => {
           <div className="absolute top-4 right-0 z-20 lg:hidden">
             <MobileSidebarNav />
           </div>
-          <Outlet />
+          <div>{children}</div>
         </div>
       </div>
     </div>

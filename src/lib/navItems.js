@@ -17,6 +17,10 @@ export const navItems = [
     name: "Find Job",
     path: "/find-job",
   },
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+  },
 ];
 
 export const candidatesSidebarNavItems = [

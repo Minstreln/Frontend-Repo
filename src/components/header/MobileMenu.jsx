@@ -3,7 +3,7 @@ import { navItems } from "../../lib/navItems";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 const MobileMenu = () => {
@@ -22,14 +22,14 @@ const MobileMenu = () => {
       >
         <nav className="flex flex-col space-y-4 mt-8">
           {navItems.map((item) => (
-            <Link
+            <NavLink
               key={item}
               to={item.path}
               className="text-lg hover:text-primary"
               onClick={() => setIsOpen(false)}
             >
               {item.name}
-            </Link>
+            </NavLink>
           ))}
 
           <Button

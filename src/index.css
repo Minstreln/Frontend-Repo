@@ -119,3 +119,7 @@ body {
 .swiper-pagination-bullet-active {
   @apply !bg-primary;
 }
+
+.active {
+  @apply text-primary;
+}
