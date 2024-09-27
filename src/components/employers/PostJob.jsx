@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JobBenefits from "./JobBenefits";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -16,6 +16,9 @@ const PostJob = () => {
   const [skillsAndQualifications, setSkillsAndQualifications] = useState([]);
   const [newSkills, setNewSkills] = useState("");
 
+  const[categoryValue, setCategoryValue]= useState(1)
+  const[category ,  setCategory] = useState("")// value that will be sent to backend
+
   const token = localStorage.getItem("token");
 
   const [values, setValues] = useState({
@@ -23,8 +26,10 @@ const PostJob = () => {
     hiringCompany: "",
     employmentType: "full-time",
     location: "india",
+    city:"Bangladesh",  
     minSalary: "",
     maxSalary: "",
+    salaryType: "Yearly",
     jobSetup: "on-site",
     positionLevel: "Entry level",
     yearsOfExperience: "",
@@ -40,6 +45,7 @@ const PostJob = () => {
     responsibility,
     skillsAndQualifications,
     tag,
+    category
   };
   const handleAddTag = ()=> {
     if(newTag ==""){
@@ -47,7 +53,6 @@ const PostJob = () => {
     }
     setTag([...tag, newTag])
     setNewTag("")
-    console.log(tag)
   }
 
   //code to add requirement
@@ -84,8 +89,9 @@ const PostJob = () => {
       responsibility,
       skillsAndQualifications,
       tag,
+      category
     };
-
+    console.log(actualValues)
     const headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -95,7 +101,6 @@ const PostJob = () => {
 
     try {
       const res = await axios.post(url, actualValues, { headers });
-      console.log("job added successfully");
       toast.success("Job added successfully!");
 
       setValues({
@@ -103,6 +108,8 @@ const PostJob = () => {
         hiringCompany: "",
         employmentType: "full-time",
         location: "india",
+        city:"Bangladesh",
+        salaryType: "Yearly",
         minSalary: "",
         maxSalary: "",
         jobSetup: "on-site",
@@ -130,6 +137,32 @@ const PostJob = () => {
       [identifier]: value,
     }));
   }
+
+  //code to switch category value
+  const handleCategory = async(e)=>{
+    let value = e.target.value
+    setCategoryValue(value)
+    await getCategory(categoryValue)
+  }
+
+  //code to set category to the first by default
+  useEffect(()=>{
+    getCategory(1)
+  },[])
+
+  //code to get category
+  const getCategory = async(id)=>{
+    try{
+      const res = await axios.get("https://lysterpro-backend.onrender.com/api/v1/category/get-all-categories")
+
+      setCategory(res.data.data.data[id]._id)
+      return res.data
+    }
+    catch(err){
+      throw new Error(err.response.data.message || "Couldn't get category");
+    }
+  }
+
   return (
     <div>
       <div className="w-[800px] ">
@@ -162,6 +195,23 @@ const PostJob = () => {
               onChange={() => handleInputChange("position", event.target.value)}
             />
           </div>
+
+          <div className="flex flex-col gap-2">
+              <label htmlFor="category">Category</label>
+              <select
+                id="category"
+                className="border px-4 py-2 rounded-md"
+                onChange={handleCategory}
+              >
+                <option value={1}>Chep</option>
+                <option  value={2}>Programming</option>
+                <option value={3}>Teaching</option>
+                <option  value={4}>Experts</option>
+                <option value={5}>Marketing</option>
+                <option value={6}>Design</option>
+              </select>
+            </div>
+
           <div className="grid grid-cols-3 gap-2 mb-7">
             <div className="col-span-2 flex flex-col gap-2">
               <label htmlFor="keyword">Tags</label>
@@ -242,9 +292,13 @@ const PostJob = () => {
                 name=""
                 id="salaryType"
                 className="border px-4 py-2 rounded-md"
+                value={values.salaryType}
+                onChange={() =>
+                  handleInputChange("salaryType", event.target.value)
+                }
               >
-                <option value="yearly">Yearly</option>
-                <option value="monthly">Monthly</option>
+                <option value="Yearly">Yearly</option>
+                <option value="Monthly">Monthly</option>
               </select>
             </div>
           </div>
@@ -359,9 +413,14 @@ const PostJob = () => {
                 <select
                   name=""
                   id="city"
+                  value={values.city}
+                  onChange={() =>
+                    handleInputChange("city", event.target.value)
+                  }
                   className="border px-4 py-2 rounded-md"
                 >
-                  <option value="Entry Level">Bangladesh</option>
+                  <option value="Bangladesh">Bangladesh</option>
+                  <option value="Washington">Washington</option>
                 </select>
               </div>
             </div>
