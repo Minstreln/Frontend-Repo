@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 const PostJob = () => {
   const [tag, setTag] = useState([]);
-  const[newTag, setNewTag] = useState("")
+  const [newTag, setNewTag] = useState("");
 
   const [requirements, setRequirements] = useState([]);
   const [newRequirement, setNewRequirement] = useState("");
@@ -16,8 +16,8 @@ const PostJob = () => {
   const [skillsAndQualifications, setSkillsAndQualifications] = useState([]);
   const [newSkills, setNewSkills] = useState("");
 
-  const[categoryValue, setCategoryValue]= useState(1)
-  const[category ,  setCategory] = useState("")// value that will be sent to backend
+  const [categoryValue, setCategoryValue] = useState(1);
+  const [category, setCategory] = useState(""); // value that will be sent to backend
 
   const token = localStorage.getItem("token");
 
@@ -26,7 +26,7 @@ const PostJob = () => {
     hiringCompany: "",
     employmentType: "full-time",
     location: "india",
-    city:"Bangladesh",  
+    city: "Bangladesh",
     minSalary: "",
     maxSalary: "",
     salaryType: "Yearly",
@@ -35,7 +35,7 @@ const PostJob = () => {
     yearsOfExperience: "",
     expirationDate: "",
     jobDescription: "",
-    education:"graduate"
+    education: "graduate",
   });
 
   //actual values that will be sent after integration with reuiremnt field and tag field
@@ -45,15 +45,15 @@ const PostJob = () => {
     responsibility,
     skillsAndQualifications,
     tag,
-    category
+    category,
   };
-  const handleAddTag = ()=> {
-    if(newTag ==""){
-      return
+  const handleAddTag = () => {
+    if (newTag == "") {
+      return;
     }
-    setTag([...tag, newTag])
-    setNewTag("")
-  }
+    setTag([...tag, newTag]);
+    setNewTag("");
+  };
 
   //code to add requirement
   const handleAddRequirement = () => {
@@ -89,9 +89,9 @@ const PostJob = () => {
       responsibility,
       skillsAndQualifications,
       tag,
-      category
+      category,
     };
-    console.log(actualValues)
+    console.log(actualValues);
     const headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -108,7 +108,7 @@ const PostJob = () => {
         hiringCompany: "",
         employmentType: "full-time",
         location: "india",
-        city:"Bangladesh",
+        city: "Bangladesh",
         salaryType: "Yearly",
         minSalary: "",
         maxSalary: "",
@@ -117,13 +117,12 @@ const PostJob = () => {
         yearsOfExperience: "",
         expirationDate: "",
         jobDescription: "",
-        education:"graduate",
-      })
-      setRequirements([])
-      setResponsiblity([])
-      setSkillsAndQualifications([])
-      setTag([])
-
+        education: "graduate",
+      });
+      setRequirements([]);
+      setResponsiblity([]);
+      setSkillsAndQualifications([]);
+      setTag([]);
 
       return res.data;
     } catch (err) {
@@ -139,33 +138,34 @@ const PostJob = () => {
   }
 
   //code to switch category value
-  const handleCategory = async(e)=>{
-    let value = e.target.value
-    setCategoryValue(value)
-    await getCategory(categoryValue)
-  }
+  const handleCategory = async (e) => {
+    let value = e.target.value;
+    setCategoryValue(value);
+    await getCategory(categoryValue);
+  };
 
   //code to set category to the first by default
-  useEffect(()=>{
-    getCategory(1)
-  },[])
+  useEffect(() => {
+    getCategory(1);
+  }, []);
 
   //code to get category
-  const getCategory = async(id)=>{
-    try{
-      const res = await axios.get("https://lysterpro-backend.onrender.com/api/v1/category/get-all-categories")
+  const getCategory = async (id) => {
+    try {
+      const res = await axios.get(
+        "https://lysterpro-backend.onrender.com/api/v1/category/get-all-categories"
+      );
 
-      setCategory(res.data.data.data[id]._id)
-      return res.data
-    }
-    catch(err){
+      setCategory(res.data.data.data[id]._id);
+      return res.data;
+    } catch (err) {
       throw new Error(err.response.data.message || "Couldn't get category");
     }
-  }
+  };
 
   return (
     <div>
-      <div className="w-[800px] ">
+      <div className="lg:w-[750px] w-full sm:px-5 px-2 ">
         <h1 className="text-[22px] font-bold mb-10">Post a job</h1>
         <form action="" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2 mb-3">
@@ -196,30 +196,30 @@ const PostJob = () => {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-              <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                className="border px-4 py-2 rounded-md"
-                onChange={handleCategory}
-              >
-                <option value={1}>Chep</option>
-                <option  value={2}>Programming</option>
-                <option value={3}>Teaching</option>
-                <option  value={4}>Experts</option>
-                <option value={5}>Marketing</option>
-                <option value={6}>Design</option>
-              </select>
-            </div>
+          <div className="flex flex-col gap-2 mb-4">
+            <label htmlFor="category">Category</label>
+            <select
+              id="category"
+              className="border px-4 py-2 rounded-md"
+              onChange={handleCategory}
+            >
+              <option value={1}>Chep</option>
+              <option value={2}>Programming</option>
+              <option value={3}>Teaching</option>
+              <option value={4}>Experts</option>
+              <option value={5}>Marketing</option>
+              <option value={6}>Design</option>
+            </select>
+          </div>
 
-          <div className="grid grid-cols-3 gap-2 mb-7">
+          <div className="grid md:grid-cols-3 grid-cols-2 md:gap-2 gap-5 mb-7">
             <div className="col-span-2 flex flex-col gap-2">
               <label htmlFor="keyword">Tags</label>
               <ul className="list-disc">
-                  {tag.map((tags, index) => (
-                    <li key={index}>{tags}</li>
-                  ))}
-                </ul>
+                {tag.map((tags, index) => (
+                  <li key={index}>{tags}</li>
+                ))}
+              </ul>
               <div>
                 <input
                   type="text"
@@ -257,7 +257,7 @@ const PostJob = () => {
           </div>
 
           <h2 className="font-semibold text-[18px] mb-4">Salary</h2>
-          <div className="grid grid-cols-3 gap-2 mb-7">
+          <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2 mb-7">
             <div className="flex flex-col gap-2">
               <label htmlFor="minSalary">Min Salary [USD]</label>
               <input
@@ -306,7 +306,7 @@ const PostJob = () => {
           <h2 className="font-semibold text-[18px] mb-4">
             Advanced Information
           </h2>
-          <div className="grid grid-cols-3 gap-3 gap-y-9 mb-7">
+          <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3 md:gap-y-6 mb-7">
             <div className="flex flex-col gap-2">
               <label htmlFor="salaryType">Education</label>
               <select
@@ -389,9 +389,9 @@ const PostJob = () => {
             </div>
           </div>
 
-          <div className="bg-gray-200 rounded-md px-8 py-5 mb-7">
+          <div className="bg-gray-200 rounded-md sm:px-8 px-4 sm:py-5 py-3 mb-7">
             <h2 className="text-[18px] font-medium mb-4">Location</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid sm:grid-cols-2 grid-cols-1 gap-3">
               <div className="flex flex-col gap-2">
                 <label htmlFor="country">Country</label>
                 <select
@@ -414,9 +414,7 @@ const PostJob = () => {
                   name=""
                   id="city"
                   value={values.city}
-                  onChange={() =>
-                    handleInputChange("city", event.target.value)
-                  }
+                  onChange={() => handleInputChange("city", event.target.value)}
                   className="border px-4 py-2 rounded-md"
                 >
                   <option value="Bangladesh">Bangladesh</option>
@@ -464,7 +462,7 @@ const PostJob = () => {
             />
             <button
               type="button"
-              className="text-white block bg-primary px-5 py-2 rounded"
+              className="text-white block bg-primary sm:px-5 px-3 sm:text-base text-[14px] py-2 rounded"
               onClick={handleAddRequirement}
             >
               Add Requirement
@@ -490,7 +488,7 @@ const PostJob = () => {
             />
             <button
               type="button"
-              className="text-white block bg-primary px-5 py-2 rounded"
+              className="text-white block bg-primary sm:px-5 px-3 sm:text-base text-[14px] py-2 rounded"
               onClick={handleAddResponsibilty}
             >
               Add Responsibility
@@ -516,14 +514,14 @@ const PostJob = () => {
             />
             <button
               type="button"
-              className="text-white block bg-primary px-5 py-2 rounded"
+              className="text-white block bg-primary sm:px-5 px-3 sm:text-base text-[14px] py-2 rounded"
               onClick={handleAddSkills}
             >
               Add Skills
             </button>
           </div>
 
-          <button className="text-white block bg-primary px-5 py-2 rounded">
+          <button className="text-white block bg-primary sm:px-5 px-3 sm:text-base text-[14px py-2 rounded">
             Post a Job
           </button>
         </form>

@@ -76,14 +76,14 @@ const JobDetails = ({ job }) => {
 
           <p className="text-gray-900  font-medium pb-2">Responsibilities:</p>
           <ol className="list-disc pl-8 flex flex-col gap-2">
-            {job.responsibility.map((res) => (
-              <li key={res}>{res}</li>
+            {job.responsibility.map((res, index) => (
+              <li key={index}>{res}</li>
             ))}
           </ol>
           <p className="text-gray-900  font-medium pb-2">Requirements:</p>
           <ol className="list-disc pl-8 flex flex-col gap-2">
-            {job.requirements.map((requirement) => (
-              <li key={requirement}>{requirement}</li>
+            {job.requirements.map((requirement, index) => (
+              <li key={index}>{requirement}</li>
             ))}
           </ol>
 
@@ -91,8 +91,8 @@ const JobDetails = ({ job }) => {
             Skills And Qualifications:
           </p>
           <ol className="list-disc pl-8 flex flex-col gap-2">
-            {job.skillsAndQualifications.map((item) => (
-              <li key={item}>{item}</li>
+            {job.skillsAndQualifications.map((item, index) => (
+              <li key={index}>{item}</li>
             ))}
           </ol>
           {user?.role === userRole.jobSeeker && (
@@ -121,7 +121,7 @@ const JobDetails = ({ job }) => {
               <span className="text-[#0BA02C] font-semibold text-lg">
                 ${job.minSalary}
               </span>
-              <span className="text-sm">Yearly salary</span>
+              <span className="text-sm">{job.salaryType} salary</span>
             </div>
             <div className="w-[2px] h-20 bg-gray-200" />
             <div className="w-full flex flex-col items-center justify-center gap-1 text-gray-600">
