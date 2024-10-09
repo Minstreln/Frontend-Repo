@@ -10,4 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    // eslint-disable-next-line no-undef
+    "process.env": process.env,
+  },
 });

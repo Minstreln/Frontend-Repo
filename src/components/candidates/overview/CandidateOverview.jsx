@@ -6,14 +6,14 @@ import {
   User,
   UserCircleIcon,
 } from "lucide-react";
-import useAuth from "../../hooks/useAuth";
-import { Card, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
+import useAuth from "../../../hooks/useAuth";
+import { Card, CardContent } from "../../ui/card";
+import { Button } from "../../ui/button";
 import DataTable from "react-data-table-component";
-import { customTableStyles } from "../../styles/customTableSyales";
+import { customTableStyles } from "../../../styles/customTableSyales";
 import { Link } from "react-router-dom";
-import { useAppliedJobs } from "../../hooks/useAppliedJobs";
-import { useSavedJobs } from "../../hooks/useSavedJobs";
+import { useAppliedJobs } from "../../../hooks/useAppliedJobs";
+import { useSavedJobs } from "../../../hooks/useSavedJobs";
 
 const CandidateOverview = () => {
   const { user } = useAuth();
@@ -137,7 +137,7 @@ const CandidateOverview = () => {
             </span>
           </div>
         </div>
-        <Link to={"/dashboard/settings"}>
+        <Link to={"/dashboard/candidate-profile"}>
           <Button
             variant="secondary"
             size="lg"
@@ -152,12 +152,14 @@ const CandidateOverview = () => {
           <h2 className="text-lg text-gray-800 font-semibold">
             Recently Applied
           </h2>
-          <Button
-            variant="ghost"
-            className="text-primary hover:text-primary/90"
-          >
-            View all <ArrowRight className="h-5 w-5 ml-2" />
-          </Button>
+          <Link to={"/dashboard/applied-jobs"}>
+            <Button
+              variant="secondary"
+              className="text-primary hover:text-primary/90"
+            >
+              View all <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          </Link>
         </div>
 
         <DataTable
@@ -165,9 +167,7 @@ const CandidateOverview = () => {
           data={appliedJobs}
           customStyles={customTableStyles}
           pagination
-          paginationPerPage={5}
-          paginationRowsPerPageOptions={[5, 10, 15, 20]}
-          noHeader
+          paginationPerPage={3}
         />
       </div>
     </div>

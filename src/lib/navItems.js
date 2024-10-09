@@ -4,7 +4,6 @@ import {
   BriefcaseBusiness,
   BriefcaseIcon,
   LayoutDashboard,
-  Settings,
   UserCircleIcon,
 } from "lucide-react";
 
@@ -17,22 +16,26 @@ export const navItems = [
     name: "Find Job",
     path: "/find-job",
   },
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+  },
 ];
 
 export const candidatesSidebarNavItems = [
   { name: "Overview", icon: LayoutDashboard, href: "" },
   { name: "Applied Jobs", icon: Briefcase, href: "applied-jobs" },
   { name: "Saved Jobs", icon: BookmarkCheck, href: "saved-jobs" },
-  { name: "Settings", icon: Settings, href: "settings" },
+  {
+    name: "Candidate Profile",
+    icon: UserCircleIcon,
+    href: "candidate-profile",
+  },
 ];
 
 export const employersSidebarNavItems = [
   { name: "Overview", icon: LayoutDashboard, href: "" },
-  {
-    name: "Employers Profile",
-    icon: UserCircleIcon,
-    href: "employers-profile",
-  },
+
   { name: "Post Job", icon: BriefcaseBusiness, href: "post-job" },
   { name: "My Jobs", icon: BriefcaseIcon, href: "my-jobs" },
   {
@@ -40,5 +43,9 @@ export const employersSidebarNavItems = [
     icon: BookmarkCheck,
     href: "saved-candidates",
   },
-  { name: "Settings", icon: Settings, href: "settings" },
+  {
+    name: "Employer Profile",
+    icon: UserCircleIcon,
+    href: "employer-profile",
+  },
 ];

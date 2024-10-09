@@ -1,4 +1,4 @@
-import CandidateOverview from "./candidates/CandidateOverview";
+import CandidateOverview from "./candidates/overview/CandidateOverview";
 import EmployerOverview from "./employers/EmployerOverview";
 import useAuth from "../hooks/useAuth";
 import { userRole } from "../lib/constants";

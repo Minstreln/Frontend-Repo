@@ -1,17 +1,16 @@
 /* eslint-disable react/prop-types */
-
-import { BriefcaseBusiness, RefreshCw, Trash2 } from "lucide-react";
-import { Button } from "../ui/button";
+import { Trash2, RefreshCw, GraduationCap } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import EditWorkExperienceDetails from "./EditWorkExperienceDetails";
+import { Button } from "@/components/ui/button";
+import EditAcademicDetails from "./EditAcademicDetails";
 
-const WorkExperienceDetails = ({
-  workExperience,
+const AcademicDetails = ({
+  academicDetails,
   refetch,
-  deleteWorkExperience,
+  deleteAcademicDetail,
 }) => {
   return (
-    <Card className="w-full ">
+    <Card className="w-full shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <Button
           variant="default"
@@ -23,36 +22,33 @@ const WorkExperienceDetails = ({
         </Button>
       </CardHeader>
       <CardContent>
-        {workExperience.length === 0 ? (
-          <div className="text-center text-gray-600">
-            No Work Experience Details
+        {academicDetails.length === 0 ? (
+          <div className="text-center text-destructive">
+            No Academic Details
           </div>
         ) : (
-          workExperience.map((detail) => (
+          academicDetails.map((detail) => (
             <div key={detail._id} className="mb-4 p-4 border rounded-lg">
               <div className="flex justify-between items-start">
                 <div className="flex flex-row gap-5">
                   <span className="bg-primary/10 p-2 rounded flex items-center justify-center">
-                    <BriefcaseBusiness className="h-10 w-10 text-primary" />
+                    <GraduationCap className="h-10 w-10 text-primary" />
                   </span>
                   <div className="flex flex-col gap-1">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {detail.role}
+                    <h3 className="font-medium text-gray-900">
+                      {detail.course}
                     </h3>
                     <span className="text-sm text-gray-600">
-                      {detail.company} - {detail.typeOfRole}
+                      {detail.institutionName} - {detail.yearOfCompletion}
                     </span>
                   </div>
                 </div>
                 <div className="flex flex-row items-center">
-                  <EditWorkExperienceDetails
-                    refetch={refetch}
-                    detail={detail}
-                  />
+                  <EditAcademicDetails refetch={refetch} detail={detail} />
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteWorkExperience(detail._id)}
+                    onClick={() => deleteAcademicDetail(detail._id)}
                   >
                     <Trash2 className="h-5 w-5 text-destructive" />
                   </Button>
@@ -66,4 +62,4 @@ const WorkExperienceDetails = ({
   );
 };
 
-export default WorkExperienceDetails;
+export default AcademicDetails;

@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
+import { Input } from "../../../ui/input";
+import { Label } from "../../../ui/label";
+import { Button } from "../../../ui/button";
 
 import {
   Dialog,
@@ -9,14 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "../../../ui/dialog";
 import { useState } from "react";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../../../hooks/useAuth";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { cloudinaryConfig } from "../../../../config/cloudinary";
 
-const ResumeForm = () => {
+const ResumeForm = ({ refetch }) => {
   const [open, setOpen] = useState(false);
+  const [uploadedResumeUrl, setUploadedResumeUrl] = useState(null);
 
   const { auth } = useAuth();
 
@@ -34,35 +37,55 @@ const ResumeForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("resume", data.resume[0]);
+      // Upload image to Cloudinary
+      if (data.resume[0].length === 0) return;
 
-      const response = await axios.post(
-        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/resume",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth}`,
-          },
-        }
+      const cloudinaryFormData = new FormData();
+
+      cloudinaryFormData.append("file", data.resume[0]);
+      cloudinaryFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
+      cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
+
+      const results = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/raw/upload`,
+        cloudinaryFormData
       );
 
-      if (response.data.status === "success") {
-        toast.success("Work experience added successfully");
-        reset();
-        setOpen(false);
+      if (results.data.secure_url === null) {
+        throw new Error("Failed to upload image");
+      }
+      setUploadedResumeUrl(results.data.secure_url);
+
+      if (uploadedResumeUrl !== null) {
+        const formData = { ...data, resume: uploadedResumeUrl };
+
+        const response = await axios.post(
+          "https://lysterpro-backend.onrender.com/api/v1/jobseeker/resume",
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth}`,
+            },
+          }
+        );
+
+        if (response.data.status === "success") {
+          toast.success("Resume added successfully");
+          reset();
+          setOpen(false);
+          refetch();
+        }
       }
     } catch (error) {
       toast.error(error.message);
-      console.error("Error adding work experience:", error);
+      console.error("Error adding resume:", error);
     }
   };
 
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setOpen} size="lg">
         <DialogTrigger asChild>
           <Button
             className="text-white bg-primary font-semibold"
@@ -88,7 +111,7 @@ const ResumeForm = () => {
                   <Input
                     type="text"
                     id="title"
-                    placeholder="Name of Institution"
+                    placeholder="Resume Title"
                     {...register("title", { required: true })}
                     className="focus-visible:ring-0 !py-5"
                   />
@@ -106,9 +129,9 @@ const ResumeForm = () => {
                   <Input
                     type="file"
                     id="resume"
-                    accept=".doc,.docx,.pdf,.txt,.odt"
+                    accept="application/pdf"
                     {...register("resume", { required: true })}
-                    className="focus-visible:ring-0"
+                    className="focus-visible:ring-0 h-10"
                   />
                   {errors.resume && (
                     <span className="text-red-500 text-sm">
@@ -123,6 +146,7 @@ const ResumeForm = () => {
                     type="reset"
                     size="lg"
                     onClick={() => reset()}
+                    disabled={isSubmitting}
                     className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
                   >
                     Reset
@@ -140,7 +164,7 @@ const ResumeForm = () => {
                         Saving...
                       </div>
                     ) : (
-                      "Save Changes"
+                      "Save"
                     )}
                   </Button>
                 </div>

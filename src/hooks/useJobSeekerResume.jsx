@@ -15,14 +15,14 @@ export const useJobSeekerResume = () => {
 
     try {
       const response = await axios.get(
-        `https://lysterpro-backend.onrender.com/api/v1/jobseeker/get-experience-detail`,
+        `https://lysterpro-backend.onrender.com/api/v1/jobseeker/myResume`,
         {
           headers: auth ? { Authorization: `Bearer ${auth}` } : {},
         }
       );
 
       if (response.data.status === "success") {
-        setResumes(response.data.data.resumeDetails);
+        setResumes(response.data.data.userResume);
       } else {
         throw new Error("Failed to fetch resume");
       }
@@ -41,12 +41,12 @@ export const useJobSeekerResume = () => {
 
       try {
         const response = await axios.delete(
-          `https://lysterpro-backend.onrender.com/api/v1/jobseeker/delete-experience-detail/${id}`,
+          `https://lysterpro-backend.onrender.com/api/v1/jobseeker/delete-resume/${id}`,
           {
             headers: auth ? { Authorization: `Bearer ${auth}` } : {},
           }
         );
-        console.log(response);
+
         if (response.status === 204) {
           toast.success("Resume deleted successfully");
           fetchResumes();
