@@ -21,7 +21,7 @@ export const useJobSeekerPersonalDetails = () => {
       );
 
       if (response.data.status === "success") {
-        setPersonalDetails(response.data.data.personalDetails[0]);
+        setPersonalDetails(response.data.data.personalDetails);
       } else {
         throw new Error("Failed to fetch personal details");
       }

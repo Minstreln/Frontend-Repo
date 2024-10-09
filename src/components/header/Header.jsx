@@ -3,6 +3,14 @@ import { Button } from "../ui/button";
 import { navItems } from "../../lib/navItems";
 import { Link, NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import userImage from "../../assets/user.png";
+import { userRole } from "../../lib/constants";
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
@@ -38,7 +46,7 @@ const Header = () => {
         <div className="w-full flex items-center justify-end space-x-4">
           {isAuthenticated ? (
             <>
-              <div className="flex flex-col justify-center">
+              <div className="hidden  sm:flex flex-col justify-center">
                 <span className="text-gray-900 text-nowrap">
                   Welcome {user?.firstName}
                 </span>
@@ -46,13 +54,52 @@ const Header = () => {
                   {user?.email}
                 </span>
               </div>
-              <Button
-                variant="outline"
-                className="text-sm bg-red-600/90 hover:bg-red-600 text-white hover:text-white font-semibold hidden sm:block"
-                onClick={logout}
-              >
-                Log Out
-              </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Avatar className="w-12 h-12 cursor-pointer">
+                    <AvatarImage
+                      src={user?.image || userImage}
+                      alt="user image"
+                    />
+                    <AvatarFallback>
+                      {user?.firstName[0].toUpperCase()}
+                      {user?.lastName[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 flex flex-col gap-5">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {user?.firstName} {user?.lastName}
+                    </h3>
+                    <p className="text-sm leading-5 text-gray-600">
+                      {user?.email}
+                    </p>
+                  </div>
+                  <hr />
+                  <Link
+                    to={`${
+                      user?.role === userRole.jobSeeker
+                        ? "/dashboard/candidate-profile"
+                        : "/dashboard/employer-profile"
+                    }`}
+                  >
+                    <Button
+                      variant="secondary"
+                      className="w-full border-none outline-none"
+                    >
+                      View Profile
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="secondary"
+                    className="w-full bg-red-600/90 hover:bg-red-600 text-white hover:text-white font-semibold border-none"
+                    onClick={logout}
+                  >
+                    Log Out
+                  </Button>
+                </PopoverContent>
+              </Popover>
             </>
           ) : (
             <>

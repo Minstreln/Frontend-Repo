@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../../../hooks/useAuth";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import { Label } from "../../../ui/label";
+import { Input } from "../../../ui/input";
 import {
   Select,
   SelectContent,
@@ -14,7 +14,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../../../ui/select";
 import {
   Dialog,
   DialogContent,
@@ -22,9 +22,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Button } from "../ui/button";
-import { jobLocationTypes, typeOfRole } from "../../lib/constants";
+} from "../../../ui/dialog";
+import { Button } from "../../../ui/button";
+import { jobLocationTypes, typeOfRole } from "../../../../lib/constants";
 import { Pencil } from "lucide-react";
 
 const EditWorkExperienceDetails = ({ refetch, detail }) => {
@@ -50,11 +50,27 @@ const EditWorkExperienceDetails = ({ refetch, detail }) => {
 
   const onSubmit = async (data) => {
     try {
+      console.log("FormData: ", data);
+
+      // get only the fields that have been edited/changed
+      const changedData = Object.keys(data).reduce((acc, key) => {
+        if (data[key] !== detail[key]) {
+          acc[key] = data[key];
+        }
+        return acc;
+      }, {});
+
+      console.log(changedData);
+      if (Object.keys(changedData).length === 0) {
+        return;
+      }
+
       const response = await axios.patch(
         `https://lysterpro-backend.onrender.com/api/v1/jobseeker/update-experience-detail/${detail._id}`,
-        data,
+        changedData,
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${auth}`,
           },
         }
@@ -259,6 +275,7 @@ const EditWorkExperienceDetails = ({ refetch, detail }) => {
                   type="reset"
                   size="lg"
                   onClick={() => reset()}
+                  disabled={isSubmitting}
                   className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
                 >
                   Reset

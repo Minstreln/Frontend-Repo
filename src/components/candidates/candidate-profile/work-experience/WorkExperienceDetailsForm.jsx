@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { Controller, useForm } from "react-hook-form";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
+import { Input } from "../../../ui/input";
+import { Label } from "../../../ui/label";
+import { Button } from "../../../ui/button";
 import {
   Select,
   SelectContent,
@@ -11,26 +11,24 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../../../ui/select";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { useState } from "react";
-import useAuth from "../../hooks/useAuth";
+} from "../../../ui/dialog";
+import { jobLocationTypes, typeOfRole } from "../../../../lib/constants";
 import toast from "react-hot-toast";
+import useAuth from "../../../../hooks/useAuth";
 import axios from "axios";
+import { useState } from "react";
 
-const years = Array.from({ length: 41 }, (v, i) => (1990 + i).toString());
-
-const AcademicDetailsForm = ({ refetch }) => {
+const WorkExperienceDetailsForm = ({ refetch }) => {
   const [open, setOpen] = useState(false);
-
   const { auth } = useAuth();
-
   const {
     control,
     register,
@@ -39,43 +37,37 @@ const AcademicDetailsForm = ({ refetch }) => {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      institutionName: "",
+      role: "",
+      typeOfRole: "",
+      company: "",
+      typeOfOrg: "",
       location: "",
-      yearOfCompletion: "",
-      course: "",
-      certificate: "",
+      duration: 0,
+      currentWorkPlace: true,
     },
   });
 
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append("institutionName", data.institutionName);
-      formData.append("location", data.location);
-      formData.append("yearOfCompletion", data.yearOfCompletion);
-      formData.append("course", data.course);
-      formData.append("certificate", data.certificate[0]);
-
       const response = await axios.post(
-        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/academic-detail",
-        formData,
+        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/experience",
+        data,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${auth}`,
           },
         }
       );
 
       if (response.data.status === "success") {
-        toast.success("Academic details added successfully");
+        toast.success("Work experience added successfully");
         reset();
         setOpen(false);
         refetch();
       }
     } catch (error) {
       toast.error(error.message);
-      console.error("Error adding academic details:", error);
+      console.error("Error adding work experience:", error);
     }
   };
 
@@ -94,61 +86,61 @@ const AcademicDetailsForm = ({ refetch }) => {
         <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle className="text-lg text-gray-800">
-              Add New Academic Details
+              Add New Work Experince
             </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-6 py-5">
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-5 pr-3 overflow-y-scroll max-h-[400px]">
                 <div className="w-full flex flex-col gap-2">
                   <Label
-                    htmlFor="institutionName"
+                    htmlFor="company"
                     className="text-gray-900 text-[16px]"
                   >
-                    Name of Institution
+                    Company
                   </Label>
                   <Input
                     type="text"
-                    id="institutionName"
-                    placeholder="Name of Institution"
-                    {...register("institutionName", { required: true })}
+                    id="company"
+                    placeholder="Company"
+                    {...register("company", { required: true })}
                     className="focus-visible:ring-0 !py-5"
                   />
-                  {errors.institutionName && (
+                  {errors.company && (
                     <span className="text-red-500 text-sm">
-                      Name of Institution is required
+                      Company is required
                     </span>
                   )}
                 </div>
                 <div className="w-full flex flex-col gap-2">
-                  <Label htmlFor="course" className="text-gray-900 text-[16px]">
-                    Course
+                  <Label htmlFor="role" className="text-gray-900 text-[16px]">
+                    Role
                   </Label>
                   <Input
                     type="text"
-                    id="course"
-                    placeholder="Course"
-                    {...register("course", { required: true })}
+                    id="role"
+                    placeholder="Role"
+                    {...register("role", { required: true })}
                     className="focus-visible:ring-0 !py-5"
                   />
-                  {errors.course && (
+                  {errors.role && (
                     <span className="text-red-500 text-sm">
-                      Course is required
+                      Role is required
                     </span>
                   )}
                 </div>
 
                 <div className="w-full flex flex-col gap-2">
                   <Label
-                    htmlFor="yearOfCompletion"
+                    htmlFor="typeOfRole"
                     className="text-gray-900 text-[16px]"
                   >
-                    Year of Completion
+                    Type Of Role
                   </Label>
                   <Controller
-                    name="yearOfCompletion"
+                    name="typeOfRole"
                     control={control}
-                    rules={{ required: "Year of Completion is required" }}
+                    rules={{ required: true }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -159,14 +151,14 @@ const AcademicDetailsForm = ({ refetch }) => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectLabel>Select year of completion</SelectLabel>
-                            {years.map((year) => (
+                            <SelectLabel>Select type of role</SelectLabel>
+                            {typeOfRole.map((item) => (
                               <SelectItem
-                                key={year}
-                                value={year}
+                                key={item.value}
+                                value={item.value}
                                 className="cursor-pointer"
                               >
-                                {year}
+                                {item.label}
                               </SelectItem>
                             ))}
                           </SelectGroup>
@@ -174,9 +166,9 @@ const AcademicDetailsForm = ({ refetch }) => {
                       </Select>
                     )}
                   />
-                  {errors.yearOfCompletion && (
+                  {errors.typeOfRole && (
                     <span className="text-red-500 text-sm">
-                      Year Of Completion is required
+                      Type Of Role is required
                     </span>
                   )}
                 </div>
@@ -185,49 +177,100 @@ const AcademicDetailsForm = ({ refetch }) => {
                     htmlFor="location"
                     className="text-gray-900 text-[16px]"
                   >
-                    Location
+                    Job Location
                   </Label>
-                  <Input
-                    type="text"
-                    id="location"
-                    placeholder="Location"
-                    {...register("location", { required: true })}
-                    className="focus-visible:ring-0 !py-5"
+                  <Controller
+                    name="location"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="py-5">
+                          <SelectValue placeholder="Select job location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Select job location</SelectLabel>
+                            {jobLocationTypes.map((item) => (
+                              <SelectItem
+                                key={item.value}
+                                value={item.value}
+                                className="cursor-pointer"
+                              >
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                   {errors.location && (
                     <span className="text-red-500 text-sm">
-                      Location is required
+                      Job Location is required
                     </span>
                   )}
                 </div>
 
-                <div className="w-full flex flex-col gap-2 pb-4">
+                <div className="w-full flex flex-col gap-2">
                   <Label
-                    htmlFor="certificate"
+                    htmlFor="typeOfOrg"
                     className="text-gray-900 text-[16px]"
                   >
-                    Upload Certificate
+                    Type Of Organisation
                   </Label>
                   <Input
-                    type="file"
-                    id="certificate"
-                    accept=".doc,.docx,.pdf,.txt,.odt"
-                    {...register("certificate", { required: true })}
-                    className="focus-visible:ring-0"
+                    type="text"
+                    id="typeOfOrg"
+                    placeholder="Type Of Organisation"
+                    {...register("typeOfOrg", { required: true })}
+                    className="focus-visible:ring-0 !py-5"
                   />
-                  {errors.certificate && (
+                  {errors.typeOfOrg && (
                     <span className="text-red-500 text-sm">
-                      Certificate is required
+                      Type Of Organisation is required
                     </span>
                   )}
                 </div>
-
-                <div className="w-full flex flex-row items-center gap-2 justify-between">
+                <div className="w-full flex flex-col gap-2">
+                  <Label
+                    htmlFor="duration"
+                    className="text-gray-900 text-[16px]"
+                  >
+                    Duration (in years)
+                  </Label>
+                  <Input
+                    type="number"
+                    id="duration"
+                    placeholder="Duration"
+                    {...register("duration", {
+                      required: "Duration is required",
+                      min: {
+                        value: 0,
+                        message: "Duration must be a positive number",
+                      },
+                      valueAsNumber: true,
+                    })}
+                    className="focus-visible:ring-0 !py-5"
+                  />
+                  {errors.duration && (
+                    <span className="text-red-500 text-sm">
+                      {errors.duration.message}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <DialogFooter>
+                <div className="w-full flex flex-row items-center gap-2 justify-between pt-8">
                   <Button
                     variant="outline"
                     type="reset"
                     size="lg"
                     onClick={() => reset()}
+                    disabled={isSubmitting}
                     className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
                   >
                     Reset
@@ -249,7 +292,7 @@ const AcademicDetailsForm = ({ refetch }) => {
                     )}
                   </Button>
                 </div>
-              </div>
+              </DialogFooter>
             </form>
           </div>
         </DialogContent>
@@ -258,4 +301,4 @@ const AcademicDetailsForm = ({ refetch }) => {
   );
 };
 
-export default AcademicDetailsForm;
+export default WorkExperienceDetailsForm;

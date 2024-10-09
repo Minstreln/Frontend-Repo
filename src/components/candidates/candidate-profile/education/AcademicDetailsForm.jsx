@@ -1,17 +1,8 @@
 /* eslint-disable react/prop-types */
-import { Pencil } from "lucide-react";
-import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import { Input } from "../../../ui/input";
+import { Label } from "../../../ui/label";
+import { Button } from "../../../ui/button";
 import {
   Select,
   SelectContent,
@@ -20,15 +11,27 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../../../ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../ui/dialog";
+import { useState } from "react";
+import useAuth from "../../../../hooks/useAuth";
 import toast from "react-hot-toast";
 import axios from "axios";
-import useAuth from "../../hooks/useAuth";
+import { cloudinaryConfig } from "../../../../config/cloudinary";
 
 const years = Array.from({ length: 41 }, (v, i) => (1990 + i).toString());
 
-const EditAcademicDetails = ({ refetch, detail }) => {
+const AcademicDetailsForm = ({ refetch }) => {
   const [open, setOpen] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
+
   const { auth } = useAuth();
 
   const {
@@ -39,62 +42,84 @@ const EditAcademicDetails = ({ refetch, detail }) => {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      institutionName: detail.institutionName,
-      location: detail.location,
-      yearOfCompletion: detail.yearOfCompletion,
-      course: detail.course,
-      certificate: detail.certificate,
+      institutionName: "",
+      location: "",
+      yearOfCompletion: "",
+      course: "",
+      certificate: "",
     },
   });
 
   const onSubmit = async (data) => {
-    const formData = new FormData();
-    formData.append("institutionName", data.institutionName);
-    formData.append("location", data.location);
-    formData.append("yearOfCompletion", data.yearOfCompletion);
-    formData.append("course", data.course);
-    formData.append("certificate", data.certificate[0]);
     try {
-      const response = await axios.patch(
-        `https://lysterpro-backend.onrender.com/api/v1/jobseeker/update-academic-detail/${detail._id}`,
-        formData,
-        {
-          "Content-Type": "multipart/form-data",
-          headers: auth ? { Authorization: `Bearer ${auth}` } : {},
-        }
-      );
-      console.log(response);
-      if (response.data.status === "success") {
-        toast.success("Academic detail updated successfully");
-        setOpen(false);
-        refetch();
-      } else {
-        throw new Error("Failed to update academic detail");
-      }
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to update academic detail"
+      // Upload certificate to Cloudinary
+      if (data.certificate[0].length === 0) return;
+
+      const cloudinaryFormData = new FormData();
+
+      cloudinaryFormData.append("file", data.certificate[0]);
+      cloudinaryFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
+      cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
+
+      const results = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/raw/upload`,
+        cloudinaryFormData
       );
 
-      console.error("Failed to update academic detail", err);
+      if (results.data.secure_url === null) {
+        throw new Error("Failed to upload image");
+      }
+      setUploadedUrl(results.data.secure_url);
+
+      // submit form data
+      if (uploadedUrl !== null) {
+        const formData = { ...data, certificate: uploadedUrl };
+
+        const response = await axios.post(
+          "https://lysterpro-backend.onrender.com/api/v1/jobseeker/academic-detail",
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth}`,
+            },
+          }
+        );
+
+        if (response.data.status === "success") {
+          toast.success("Academic details added successfully");
+          reset();
+          setOpen(false);
+          refetch();
+        }
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error adding academic details:", error);
     }
   };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Pencil className="h-5 w-5 text-primary" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="bg-white">
-        <DialogHeader>
-          <DialogTitle className="text-lg text-gray-800">
-            Edit Academic Detail
-          </DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-6 py-5">
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            className="text-white bg-primary font-semibold"
+            variant="contained"
+            size="lg"
+          >
+            Add New
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-lg text-gray-800">
+              Add New Academic Details
+            </DialogTitle>
+          </DialogHeader>
+
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 pr-3 overflow-y-scroll max-h-[400px]">
               <div className="w-full flex flex-col gap-2">
                 <Label
                   htmlFor="institutionName"
@@ -106,7 +131,6 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                   type="text"
                   id="institutionName"
                   placeholder="Name of Institution"
-                  defaultValue={detail.institutionName}
                   {...register("institutionName", { required: true })}
                   className="focus-visible:ring-0 !py-5"
                 />
@@ -124,7 +148,6 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                   type="text"
                   id="course"
                   placeholder="Course"
-                  defaultValue={detail.course}
                   {...register("course", { required: true })}
                   className="focus-visible:ring-0 !py-5"
                 />
@@ -147,11 +170,7 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                   control={control}
                   rules={{ required: "Year of Completion is required" }}
                   render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={detail.yearOfCompletion}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="py-5">
                         <SelectValue placeholder="Select year of completion" />
                       </SelectTrigger>
@@ -185,8 +204,7 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                 <Input
                   type="text"
                   id="location"
-                  placeholder="Location"
-                  defaultValue={detail.location}
+                  placeholder="City, Country"
                   {...register("location", { required: true })}
                   className="focus-visible:ring-0 !py-5"
                 />
@@ -207,9 +225,9 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                 <Input
                   type="file"
                   id="certificate"
-                  accept=".doc,.docx,.pdf,.txt,.odt"
+                  accept="application/pdf"
                   {...register("certificate", { required: true })}
-                  className="focus-visible:ring-0"
+                  className="focus-visible:ring-0 h-10"
                 />
                 {errors.certificate && (
                   <span className="text-red-500 text-sm">
@@ -217,13 +235,15 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                   </span>
                 )}
               </div>
-
-              <div className="w-full flex flex-row items-center gap-2 justify-between">
+            </div>
+            <DialogFooter>
+              <div className="w-full flex flex-row items-center gap-2 justify-between pt-8">
                 <Button
                   variant="outline"
                   type="reset"
                   size="lg"
                   onClick={() => reset()}
+                  disabled={isSubmitting}
                   className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
                 >
                   Reset
@@ -245,12 +265,12 @@ const EditAcademicDetails = ({ refetch, detail }) => {
                   )}
                 </Button>
               </div>
-            </div>
+            </DialogFooter>
           </form>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
-export default EditAcademicDetails;
+export default AcademicDetailsForm;
