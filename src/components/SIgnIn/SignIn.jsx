@@ -16,6 +16,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false); // state for email validation
   const [pwdIsInvalid, setPwdIsInvalid] = useState(false); //state for password validation
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,15 +51,21 @@ const SignIn = () => {
     }
 
     try {
+      // Call the login function from AuthContext
+      setLoading(true);
       const response = await login(email, password);
 
       if (response.status === "success") {
         toast.success("Login successful!");
         navigate(redirectPath, { replace: true });
+
+        setLoading(false);
       }
     } catch (err) {
       toast.error(err.message);
       console.log("Login failed:", err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,7 +135,16 @@ const SignIn = () => {
             </Link>
           </div>
           <button className="flex items-center justify-center gap-4 w-[90%] bg-primary rounded-md py-3 mt-5 text-white">
-            Sign In <IconArrowRight />
+            {loading ? (
+              <div className="flex items-center">
+                <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
+                Signing In
+              </div>
+            ) : (
+              <span className="flex items-center gap-2 font-medium">
+                <span>Sign In</span> <IconArrowRight className="h-4 w-4" />
+              </span>
+            )}
           </button>
         </form>
       </div>

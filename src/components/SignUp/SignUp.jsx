@@ -26,6 +26,8 @@ const SignUp = () => {
   const [opt, setOpt] = useState(true);
   const [active, setActive] = useState(true);
 
+  const [loading, setLoading] = useState(false);
+
   // for navigation
   const navigate = useNavigate();
 
@@ -108,11 +110,14 @@ const SignUp = () => {
 
     try {
       // Call the register function from AuthContext
+      setLoading(true);
       const response = await register(values, opt);
 
       if (response.status === "success") {
         navigate("/signin", { replace: true });
         toast.success("Registration successful!");
+
+        setLoading(false);
       }
 
       //clear fields
@@ -135,6 +140,8 @@ const SignUp = () => {
     } catch (err) {
       toast.error(err.message);
       console.log(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -286,7 +293,17 @@ const SignUp = () => {
             </label>
           </div>
           <button className="flex items-center justify-center gap-4 w-full bg-primary rounded-md py-3 mt-5 text-white">
-            Create Account <IconArrowRight />
+            {loading ? (
+              <div className="flex items-center">
+                <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
+                Creating Account
+              </div>
+            ) : (
+              <span className="flex items-center gap-2 font-medium">
+                <span>Create Account</span>
+                <IconArrowRight className="h-4 w-4" />
+              </span>
+            )}
           </button>
         </form>
       </div>
