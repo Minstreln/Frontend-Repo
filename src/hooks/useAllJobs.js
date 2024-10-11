@@ -1,40 +1,17 @@
-import { useState, useCallback, useEffect } from "react";
-import axios from "axios";
-import useAuth from "./useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllJobs } from "../api/fetchAllJobs";
 
 export const useAllJobs = () => {
-  const { auth } = useAuth();
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchJobs = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get(
-        `https://lysterpro-backend.onrender.com/api/v1/jobListing/get-all-joblistings`,
-        {
-          headers: auth ? { Authorization: `Bearer ${auth}` } : {},
-        }
-      );
-      setJobs(response.data.data.data);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch jobs");
-      console.error("Failed to fetch jobs", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [auth]);
-
-  useEffect(() => {
-    fetchJobs();
-  }, [fetchJobs]);
-
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["all-jobs"],
+    queryFn: fetchAllJobs,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 3,
+  });
   return {
-    jobs,
-    loading,
-    error,
-    refetch: fetchJobs,
+    data,
+    isLoading,
+    error: error ? error.message || "An error occurred" : null,
+    refetch,
   };
 };

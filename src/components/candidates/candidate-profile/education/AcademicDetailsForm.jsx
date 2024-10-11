@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "../../../ui/input";
 import { Label } from "../../../ui/label";
@@ -15,24 +14,23 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../../../ui/dialog";
 import { useState } from "react";
-import useAuth from "../../../../hooks/useAuth";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { cloudinaryConfig } from "../../../../config/cloudinary";
+import { cloudinaryConfig } from "../../../../config/config";
+import { useCreateAcademicDetail } from "../../../../hooks/useCandidateAcademicDetails";
+import DialogFormButtons from "../../../DialogFormButtons";
 
 const years = Array.from({ length: 41 }, (v, i) => (1990 + i).toString());
 
-const AcademicDetailsForm = ({ refetch }) => {
+const AcademicDetailsForm = () => {
   const [open, setOpen] = useState(false);
-  const [uploadedUrl, setUploadedUrl] = useState(null);
 
-  const { auth } = useAuth();
+  const createAcademicDetailMutation = useCreateAcademicDetail();
 
   const {
     control,
@@ -56,7 +54,6 @@ const AcademicDetailsForm = ({ refetch }) => {
       if (data.certificate[0].length === 0) return;
 
       const cloudinaryFormData = new FormData();
-
       cloudinaryFormData.append("file", data.certificate[0]);
       cloudinaryFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
       cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
@@ -66,33 +63,17 @@ const AcademicDetailsForm = ({ refetch }) => {
         cloudinaryFormData
       );
 
-      if (results.data.secure_url === null) {
-        throw new Error("Failed to upload image");
+      if (!results.data.secure_url) {
+        throw new Error("Failed to upload certificate");
       }
-      setUploadedUrl(results.data.secure_url);
 
-      // submit form data
-      if (uploadedUrl !== null) {
-        const formData = { ...data, certificate: uploadedUrl };
+      const formData = { ...data, certificate: results.data.secure_url };
 
-        const response = await axios.post(
-          "https://lysterpro-backend.onrender.com/api/v1/jobseeker/academic-detail",
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${auth}`,
-            },
-          }
-        );
+      await createAcademicDetailMutation.mutateAsync(formData);
 
-        if (response.data.status === "success") {
-          toast.success("Academic details added successfully");
-          reset();
-          setOpen(false);
-          refetch();
-        }
-      }
+      toast.success("Academic details added successfully");
+      reset();
+      setOpen(false);
     } catch (error) {
       toast.error(error.message);
       console.error("Error adding academic details:", error);
@@ -106,7 +87,7 @@ const AcademicDetailsForm = ({ refetch }) => {
           <Button
             className="text-white bg-primary font-semibold"
             variant="contained"
-            size="lg"
+            size="sm"
           >
             Add New
           </Button>
@@ -236,36 +217,12 @@ const AcademicDetailsForm = ({ refetch }) => {
                 )}
               </div>
             </div>
-            <DialogFooter>
-              <div className="w-full flex flex-row items-center gap-2 justify-between pt-8">
-                <Button
-                  variant="outline"
-                  type="reset"
-                  size="lg"
-                  onClick={() => reset()}
-                  disabled={isSubmitting}
-                  className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
-                >
-                  Reset
-                </Button>
-                <Button
-                  variant="default"
-                  type="submit"
-                  size="lg"
-                  className="font-semibold"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
-                      Saving...
-                    </div>
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
-              </div>
-            </DialogFooter>
+            <DialogFormButtons
+              isSubmitting={
+                isSubmitting || createAcademicDetailMutation.isLoading
+              }
+              reset={reset}
+            />
           </form>
         </DialogContent>
       </Dialog>

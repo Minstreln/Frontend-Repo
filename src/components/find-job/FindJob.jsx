@@ -9,15 +9,16 @@ import { useMemo, useState } from "react";
 import Loading from "../Loading";
 
 const FindJob = () => {
-  const { jobs, loading, error } = useAllJobs();
+  const { data: jobs, loading, error } = useAllJobs();
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = useMemo(
-    () => Math.ceil(jobs.length / JOBS_PER_PAGE),
+    () => (jobs ? Math.ceil(jobs.length / JOBS_PER_PAGE) : 0),
     [jobs]
   );
 
   const paginatedJobs = useMemo(() => {
+    if (!jobs) return [];
     const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
     return jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
   }, [jobs, currentPage]);
@@ -25,6 +26,7 @@ const FindJob = () => {
   const goToPage = (page) => {
     setCurrentPage(page);
   };
+
   return (
     <section>
       <div className="bg-[#F1F2F4] w-full self-stretch">
@@ -45,7 +47,7 @@ const FindJob = () => {
         </div>
       )}
 
-      {!loading && !error && jobs.length === 0 && (
+      {!loading && !error && jobs && jobs.length === 0 && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           No jobs found
         </div>

@@ -4,16 +4,16 @@ import { Label } from "../../../ui/label";
 import { Button } from "../../../ui/button";
 import { Textarea } from "../../../ui/textarea";
 import userImage from "@/assets/user.png";
-import useAuth from "../../../../hooks/useAuth";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { cloudinaryConfig } from "../../../../config/cloudinary";
+import { cloudinaryConfig } from "../../../../config/config";
+import { useCreatePersonalDetails } from "../../../../hooks/useCandidatePersonalDetails";
 
 const PersonalDetailsForm = () => {
   const [previewImage, setPreviewImage] = useState(null);
 
-  const { auth } = useAuth();
+  const createPersonalDetailsMutation = useCreatePersonalDetails();
 
   const {
     register,
@@ -53,53 +53,34 @@ const PersonalDetailsForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      let formData;
-      let uploadedUrl;
       // Upload image to Cloudinary
-      if (data.profileImage) {
-        const cloudinaryFormData = new FormData();
+      if (!data.profileImage) return;
 
-        cloudinaryFormData.append("file", data.profileImage);
-        cloudinaryFormData.append(
-          "upload_preset",
-          cloudinaryConfig.uploadPreset
-        );
-        cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
+      const cloudinaryFormData = new FormData();
+      cloudinaryFormData.append("file", data.profileImage);
+      cloudinaryFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
+      cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
 
-        const results = await axios.post(
-          `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
-          cloudinaryFormData
-        );
+      const results = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
+        cloudinaryFormData
+      );
 
-        if (results.data.secure_url === null) {
-          throw new Error("Failed to upload image");
-        }
-
-        uploadedUrl = results.data.secure_url;
-        setPreviewImage(uploadedUrl);
+      if (!results.data.secure_url) {
+        throw new Error("Failed to upload image");
       }
+
+      setPreviewImage(results.data.secure_url);
 
       // submit form data
 
-      if (uploadedUrl !== null) {
-        formData = { ...data, profileImage: uploadedUrl };
-      }
+      const formData = { ...data, profileImage: results.data.secure_url };
 
-      const response = await axios.post(
-        "https://lysterpro-backend.onrender.com/api/v1/jobseeker/personal-detail",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${auth}`,
-          },
-        }
-      );
+      await createPersonalDetailsMutation.mutateAsync(formData);
 
-      if (response.data.status === "success") {
-        toast.success("Profile added successfully");
-        reset();
-        setPreviewImage(null);
-      }
+      toast.success("Profile added successfully");
+      reset();
+      setPreviewImage(null);
     } catch (error) {
       toast.error(error.message);
       console.error("Error adding profile:", error);
@@ -237,7 +218,7 @@ const PersonalDetailsForm = () => {
             placeholder="Type something about you here..."
             id="aboutMe"
             {...register("aboutMe", {
-              required: true,
+              required: "About Me is required",
               minLength: {
                 value: 300,
                 message: "About Me should be at least 300 characters",
@@ -247,7 +228,7 @@ const PersonalDetailsForm = () => {
             rows={8}
           />
           {errors.aboutMe && (
-            <span className="text-red-500 text-sm">About Me is required</span>
+            <span className="text-red-500 text-sm">errors.aboutMe.message</span>
           )}
         </div>
 
@@ -255,12 +236,11 @@ const PersonalDetailsForm = () => {
           <Button
             variant="outline"
             type="reset"
-            size="lg"
             onClick={() => {
               reset();
               setPreviewImage(null);
             }}
-            disabled={isSubmitting}
+            disabled={isSubmitting || createPersonalDetailsMutation.isLoading}
             className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
           >
             Reset
@@ -268,9 +248,8 @@ const PersonalDetailsForm = () => {
           <Button
             variant="default"
             type="submit"
-            size="lg"
             className="font-semibold"
-            disabled={isSubmitting}
+            disabled={isSubmitting || createPersonalDetailsMutation.isLoading}
           >
             {isSubmitting ? (
               <div className="flex items-center">

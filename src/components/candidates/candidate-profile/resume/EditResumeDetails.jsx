@@ -9,17 +9,17 @@ import {
   DialogTrigger,
 } from "../../../ui/dialog";
 import { useState } from "react";
-import useAuth from "../../../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { Label } from "../../../ui/label";
 import { Input } from "../../../ui/input";
 import toast from "react-hot-toast";
-import axios from "axios";
+import DialogFormButtons from "../../../DialogFormButtons";
+import { useUpdateResume } from "../../../../hooks/useCandidateResume";
 
-const EditResumeDetails = ({ refetch, detail }) => {
+const EditResumeDetails = ({ detail }) => {
   const [open, setOpen] = useState(false);
 
-  const { auth } = useAuth();
+  const updateResumeMutation = useUpdateResume();
 
   const {
     register,
@@ -29,33 +29,21 @@ const EditResumeDetails = ({ refetch, detail }) => {
   } = useForm({
     defaultValues: {
       title: detail.title,
-      resume: detail.resume,
     },
   });
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
+      await updateResumeMutation.mutateAsync({
+        resumeId: detail._id,
+        resumeData: data,
+      });
 
-      const response = await axios.patch(
-        `https://lysterpro-backend.onrender.com/api/v1/jobseeker/update-resume/${detail._id}`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth}`,
-          },
-        }
-      );
-
-      if (response.data.status === "success") {
-        toast.success("Resume edited successfully");
-        reset();
-        setOpen(false);
-        refetch();
-      }
+      toast.success("Resume edited successfully");
+      reset();
+      setOpen(false);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Error editing resume");
       console.error("Error editing resume:", error);
     }
   };
@@ -92,36 +80,11 @@ const EditResumeDetails = ({ refetch, detail }) => {
                 <span className="text-red-500 text-sm">Title is required</span>
               )}
             </div>
-
-            <div className="w-full flex flex-row items-center gap-2 justify-between">
-              <Button
-                variant="outline"
-                type="reset"
-                size="lg"
-                onClick={() => reset()}
-                disabled={isSubmitting}
-                className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
-              >
-                Reset
-              </Button>
-              <Button
-                variant="default"
-                type="submit"
-                size="lg"
-                className="font-semibold"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center">
-                    <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
-                    Saving...
-                  </div>
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
           </div>
+          <DialogFormButtons
+            isSubmitting={isSubmitting || updateResumeMutation.isLoading}
+            reset={reset}
+          />
         </form>
       </DialogContent>
     </Dialog>

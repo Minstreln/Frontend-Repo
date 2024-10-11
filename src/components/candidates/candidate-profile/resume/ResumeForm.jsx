@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
 import { Input } from "../../../ui/input";
 import { Label } from "../../../ui/label";
@@ -12,16 +11,16 @@ import {
   DialogTrigger,
 } from "../../../ui/dialog";
 import { useState } from "react";
-import useAuth from "../../../../hooks/useAuth";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { cloudinaryConfig } from "../../../../config/cloudinary";
+import { cloudinaryConfig } from "../../../../config/config";
+import { useCreateResume } from "../../../../hooks/useCandidateResume";
+import DialogFormButtons from "../../../DialogFormButtons";
 
-const ResumeForm = ({ refetch }) => {
+const ResumeForm = () => {
   const [open, setOpen] = useState(false);
-  const [uploadedResumeUrl, setUploadedResumeUrl] = useState(null);
 
-  const { auth } = useAuth();
+  const createResumeMutation = useCreateResume();
 
   const {
     register,
@@ -37,11 +36,9 @@ const ResumeForm = ({ refetch }) => {
 
   const onSubmit = async (data) => {
     try {
-      // Upload image to Cloudinary
       if (data.resume[0].length === 0) return;
 
       const cloudinaryFormData = new FormData();
-
       cloudinaryFormData.append("file", data.resume[0]);
       cloudinaryFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
       cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
@@ -51,34 +48,22 @@ const ResumeForm = ({ refetch }) => {
         cloudinaryFormData
       );
 
-      if (results.data.secure_url === null) {
-        throw new Error("Failed to upload image");
+      if (!results.data.secure_url) {
+        throw new Error("Failed to upload resume");
       }
-      setUploadedResumeUrl(results.data.secure_url);
 
-      if (uploadedResumeUrl !== null) {
-        const formData = { ...data, resume: uploadedResumeUrl };
+      const formData = {
+        title: data.title,
+        resume: results.data.secure_url,
+      };
 
-        const response = await axios.post(
-          "https://lysterpro-backend.onrender.com/api/v1/jobseeker/resume",
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${auth}`,
-            },
-          }
-        );
+      await createResumeMutation.mutateAsync(formData);
 
-        if (response.data.status === "success") {
-          toast.success("Resume added successfully");
-          reset();
-          setOpen(false);
-          refetch();
-        }
-      }
+      toast.success("Resume added successfully");
+      reset();
+      setOpen(false);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Error adding resume");
       console.error("Error adding resume:", error);
     }
   };
@@ -90,7 +75,7 @@ const ResumeForm = ({ refetch }) => {
           <Button
             className="text-white bg-primary font-semibold"
             variant="contained"
-            size="lg"
+            size="sm"
           >
             Add New
           </Button>
@@ -101,76 +86,50 @@ const ResumeForm = ({ refetch }) => {
               Add New Resume
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-6 py-5">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-5">
-                <div className="w-full flex flex-col gap-2">
-                  <Label htmlFor="title" className="text-gray-900 text-[16px]">
-                    Title
-                  </Label>
-                  <Input
-                    type="text"
-                    id="title"
-                    placeholder="Resume Title"
-                    {...register("title", { required: true })}
-                    className="focus-visible:ring-0 !py-5"
-                  />
-                  {errors.title && (
-                    <span className="text-red-500 text-sm">
-                      Title is required
-                    </span>
-                  )}
-                </div>
 
-                <div className="w-full flex flex-col gap-2 pb-4">
-                  <Label htmlFor="resume" className="text-gray-900 text-[16px]">
-                    Upload Resume
-                  </Label>
-                  <Input
-                    type="file"
-                    id="resume"
-                    accept="application/pdf"
-                    {...register("resume", { required: true })}
-                    className="focus-visible:ring-0 h-10"
-                  />
-                  {errors.resume && (
-                    <span className="text-red-500 text-sm">
-                      Resume is required
-                    </span>
-                  )}
-                </div>
-
-                <div className="w-full flex flex-row items-center gap-2 justify-between">
-                  <Button
-                    variant="outline"
-                    type="reset"
-                    size="lg"
-                    onClick={() => reset()}
-                    disabled={isSubmitting}
-                    className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
-                  >
-                    Reset
-                  </Button>
-                  <Button
-                    variant="default"
-                    type="submit"
-                    size="lg"
-                    className="font-semibold"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <div className="flex items-center">
-                        <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
-                        Saving...
-                      </div>
-                    ) : (
-                      "Save"
-                    )}
-                  </Button>
-                </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-5">
+              <div className="w-full flex flex-col gap-2">
+                <Label htmlFor="title" className="text-gray-900 text-[16px]">
+                  Title
+                </Label>
+                <Input
+                  type="text"
+                  id="title"
+                  placeholder="Resume Title"
+                  {...register("title", { required: true })}
+                  className="focus-visible:ring-0 !py-5"
+                />
+                {errors.title && (
+                  <span className="text-red-500 text-sm">
+                    Title is required
+                  </span>
+                )}
               </div>
-            </form>
-          </div>
+
+              <div className="w-full flex flex-col gap-2 pb-4">
+                <Label htmlFor="resume" className="text-gray-900 text-[16px]">
+                  Upload Resume
+                </Label>
+                <Input
+                  type="file"
+                  id="resume"
+                  accept="application/pdf"
+                  {...register("resume", { required: true })}
+                  className="focus-visible:ring-0 h-10"
+                />
+                {errors.resume && (
+                  <span className="text-red-500 text-sm">
+                    Resume is required
+                  </span>
+                )}
+              </div>
+            </div>
+            <DialogFormButtons
+              isSubmitting={isSubmitting || createResumeMutation.isLoading}
+              reset={reset}
+            />
+          </form>
         </DialogContent>
       </Dialog>
     </>

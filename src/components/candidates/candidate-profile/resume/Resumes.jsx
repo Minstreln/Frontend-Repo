@@ -1,28 +1,57 @@
-/* eslint-disable react/prop-types */
-import { Eye, FileText, RefreshCw, Trash2 } from "lucide-react";
+import { Eye, FileText, Trash2 } from "lucide-react";
 import { Button } from "../../../ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import EditResumeDetails from "./EditResumeDetails";
 import { Link } from "react-router-dom";
+import {
+  useDeleteResume,
+  useFetchResume,
+} from "../../../../hooks/useCandidateResume";
+import Loading from "../../../Loading";
+import toast from "react-hot-toast";
+import ResumeForm from "./ResumeForm";
 
-const Resumes = ({ resumes, refetch, deleteResume }) => {
+const Resumes = () => {
+  const { data: resumes, isLoading, isError, error } = useFetchResume();
+  const deleteResumeMutation = useDeleteResume();
+
+  if (isLoading) {
+    return (
+      <div className="py-6">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex items-center text-red-500 font-semibold py-6">
+        Error: {error.message}
+      </div>
+    );
+  }
+
+  const handleDeleteResume = async (id) => {
+    try {
+      await deleteResumeMutation.mutateAsync(id);
+      toast.success("Resume deleted successfully");
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error deleting resume:", error);
+    }
+  };
+
   return (
     <Card className="w-full shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => refetch()}
-          className="hidden lg:block"
-        >
-          <RefreshCw className="h-5 w-5" />
-        </Button>
+      <CardHeader className="flex flex-row items-center justify-start">
+        <ResumeForm />
       </CardHeader>
       <CardContent>
-        {resumes.length === 0 ? (
+        {resumes && resumes.data.userResume.length === 0 ? (
           <div className="text-center text-destructive">No Resume Uploaded</div>
         ) : (
-          resumes.map((item) => (
+          resumes &&
+          resumes.data.userResume.map((item) => (
             <div key={item._id} className="mb-4 p-4 border rounded-lg">
               <div className="flex justify-between items-start">
                 <div className="flex flex-row gap-5 items-center justify-center">
@@ -38,11 +67,11 @@ const Resumes = ({ resumes, refetch, deleteResume }) => {
                       <Eye className="h-5 w-5 text-green-500" />
                     </Button>
                   </Link>
-                  <EditResumeDetails refetch={refetch} detail={item} />
+                  <EditResumeDetails detail={item} />
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteResume(item._id)}
+                    onClick={() => handleDeleteResume(item._id)}
                   >
                     <Trash2 className="h-5 w-5 text-destructive" />
                   </Button>

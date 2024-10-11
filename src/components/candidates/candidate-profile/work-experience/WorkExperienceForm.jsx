@@ -1,9 +1,7 @@
-/* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { Label } from "../../../ui/label";
 import { Input } from "../../../ui/input";
+import { Label } from "../../../ui/label";
+import { Button } from "../../../ui/button";
 import {
   Select,
   SelectContent,
@@ -20,36 +18,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../../ui/dialog";
-import { Button } from "../../../ui/button";
-import { jobLocationTypes, typeOfRole } from "../../../../lib/constants";
-import { Pencil } from "lucide-react";
 import { Checkbox } from "../../../ui/checkbox";
-import { useUpdateWorkExperience } from "../../../../hooks/useCandidateWorkExperience";
+import { jobLocationTypes, typeOfRole } from "../../../../lib/constants";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { useCreateWorkExperience } from "../../../../hooks/useCandidateWorkExperience";
 import DialogFormButtons from "../../../DialogFormButtons";
 
-const EditWorkExperienceDetails = ({ detail }) => {
+const WorkExperienceForm = () => {
   const [open, setOpen] = useState(false);
 
-  const updateWorkExperienceMutation = useUpdateWorkExperience();
+  const createWorkExperienceMutation = useCreateWorkExperience();
 
   const {
     control,
     register,
     handleSubmit,
-    setValue,
     watch,
+    setValue,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      role: detail.role,
-      typeOfRole: detail.typeOfRole,
-      company: detail.company,
-      typeOfOrg: detail.typeOfOrg,
-      location: detail.location,
-      startDate: detail.startDate,
-      endDate: detail.endDate,
-      currentWorkPlace: detail.currentWorkPlace,
+      role: "",
+      typeOfRole: "",
+      company: "",
+      typeOfOrg: "",
+      location: "",
+      startDate: new Date(),
+      endDate: null,
+      currentWorkPlace: false,
     },
   });
 
@@ -59,6 +57,7 @@ const EditWorkExperienceDetails = ({ detail }) => {
     name: "currentWorkPlace",
   });
 
+  // Effect to handle endDate changes based on currentWorkPlace
   useEffect(() => {
     if (currentWorkPlace) {
       setValue("endDate", null);
@@ -69,35 +68,38 @@ const EditWorkExperienceDetails = ({ detail }) => {
 
   const onSubmit = async (data) => {
     try {
-      await updateWorkExperienceMutation.mutateAsync({
-        workExperienceId: detail._id,
-        workExperienceData: data,
-      });
+      await createWorkExperienceMutation.mutateAsync(data);
 
-      toast.success("Work Experience updated successfully");
+      toast.success("Work Experience added successfully");
       reset();
       setOpen(false);
     } catch (error) {
-      toast.error(error.message);
-      console.error("Error updating work experience:", error);
+      toast.error(error.message || "Error adding work experience");
+      console.error("Error adding work experience:", error);
     }
   };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Pencil className="h-5 w-5 text-primary" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="bg-white">
-        <DialogHeader>
-          <DialogTitle className="text-lg text-gray-800">
-            Edit Work Experince
-          </DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-6 py-5">
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            className="text-white bg-primary font-semibold"
+            variant="contained"
+            size="sm"
+          >
+            Add New
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-lg text-gray-800">
+              Add New Work Experince
+            </DialogTitle>
+          </DialogHeader>
+
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-5 overflow-y-scroll max-h-[400px]">
+            <div className="flex flex-col gap-5 pr-3 pb-5 overflow-y-scroll max-h-[400px]">
               <div className="w-full flex flex-col gap-2">
                 <Label htmlFor="company" className="text-gray-900 text-[16px]">
                   Company
@@ -106,7 +108,6 @@ const EditWorkExperienceDetails = ({ detail }) => {
                   type="text"
                   id="company"
                   placeholder="Company"
-                  defaultValue={detail.company}
                   {...register("company", { required: true })}
                   className="focus-visible:ring-0 !py-5"
                 />
@@ -124,7 +125,6 @@ const EditWorkExperienceDetails = ({ detail }) => {
                   type="text"
                   id="role"
                   placeholder="Role"
-                  defaultValue={detail.role}
                   {...register("role", { required: true })}
                   className="focus-visible:ring-0 !py-5"
                 />
@@ -145,11 +145,7 @@ const EditWorkExperienceDetails = ({ detail }) => {
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={detail.typeOfRole}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="py-5">
                         <SelectValue placeholder="Select year of completion" />
                       </SelectTrigger>
@@ -185,11 +181,7 @@ const EditWorkExperienceDetails = ({ detail }) => {
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={detail.location}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="py-5">
                         <SelectValue placeholder="Select job location" />
                       </SelectTrigger>
@@ -228,7 +220,6 @@ const EditWorkExperienceDetails = ({ detail }) => {
                   type="text"
                   id="typeOfOrg"
                   placeholder="Type Of Organisation"
-                  defaultValue={detail.typeOfOrg}
                   {...register("typeOfOrg", { required: true })}
                   className="focus-visible:ring-0 !py-5"
                 />
@@ -238,6 +229,7 @@ const EditWorkExperienceDetails = ({ detail }) => {
                   </span>
                 )}
               </div>
+
               <div className="w-full flex flex-col gap-2">
                 <Label
                   htmlFor="startDate"
@@ -248,8 +240,9 @@ const EditWorkExperienceDetails = ({ detail }) => {
                 <Input
                   type="date"
                   id="startDate"
-                  defaultValue={detail.startDate}
-                  {...register("startDate")}
+                  {...register("startDate", {
+                    required: "Please enter a valid start date",
+                  })}
                   className="focus-visible:ring-0 h-10"
                 />
                 {errors.startDate && (
@@ -282,7 +275,6 @@ const EditWorkExperienceDetails = ({ detail }) => {
                       id="endDate"
                       {...field}
                       value={field.value || ""}
-                      defaultValue={detail.endDate}
                       className={`focus-visible:ring-0 h-10 ${
                         currentWorkPlace ? "bg-gray-100" : ""
                       }`}
@@ -318,15 +310,14 @@ const EditWorkExperienceDetails = ({ detail }) => {
             </div>
             <DialogFormButtons
               isSubmitting={
-                isSubmitting || updateWorkExperienceMutation.isLoading
+                isSubmitting || createWorkExperienceMutation.isLoading
               }
               reset={reset}
             />
           </form>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
-
-export default EditWorkExperienceDetails;
+export default WorkExperienceForm;

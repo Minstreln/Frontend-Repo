@@ -6,7 +6,6 @@ import { Button } from "../../../ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,19 +14,20 @@ import { Label } from "../../../ui/label";
 import { Input } from "../../../ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
-import useAuth from "../../../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import userImage from "@/assets/user.png";
 import { Textarea } from "../../../ui/textarea";
-import { cloudinaryConfig } from "../../../../config/cloudinary";
+import { cloudinaryConfig } from "../../../../config/config";
+import DialogFormButtons from "../../../DialogFormButtons";
+import { useUpdatePersonalDetails } from "../../../../hooks/useCandidatePersonalDetails";
 
-const EditPersonalDetails = ({ personalDetails, refetch }) => {
+const EditPersonalDetails = ({ personalDetails }) => {
   const [previewImage, setPreviewImage] = useState(
     personalDetails?.profileImage
   );
   const [open, setOpen] = useState(false);
 
-  const { auth } = useAuth();
+  const updatePersonalDetailsMutation = useUpdatePersonalDetails();
 
   const {
     register,
@@ -85,52 +85,39 @@ const EditPersonalDetails = ({ personalDetails, refetch }) => {
           cloudinaryFormData
         );
 
-        if (results.data.secure_url === null) {
-          throw new Error("Failed to image");
+        if (!results.data.secure_url) {
+          throw new Error("Failed to upload image");
         }
         newUploadedUrl = results.data.secure_url;
         setPreviewImage(newUploadedUrl);
       }
 
       // submit form data
-
       if (newUploadedUrl) {
         formData = { ...data, profileImage: newUploadedUrl };
       } else {
         formData = { ...data, profileImage: personalDetails?.profileImage };
       }
 
-      const response = await axios.patch(
-        `https://lysterpro-backend.onrender.com/api/v1/jobseeker/update-personal-detail/${personalDetails._id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${auth}`,
-          },
-        }
-      );
+      await updatePersonalDetailsMutation.mutateAsync({
+        personalDetailsId: personalDetails._id,
+        personalData: formData,
+      });
 
-      if (response.data.status === "success") {
-        toast.success("Profile updated successfully");
-        reset();
-        setPreviewImage(null);
-        setOpen(false);
-        refetch();
-      }
+      toast.success("Profile updated successfully");
+      reset();
+      setPreviewImage(null);
+      setOpen(false);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error || "Error updating profile");
       console.error("Error updating profile:", error);
     }
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen} className="w-full" size="xl">
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="text-white bg-primary mt-6 text-lg"
-          variant="contained"
-          size={"lg"}
-        >
-          <Edit className="h-5 w-5 mr-2" /> Edit Personal Details
+        <Button className="text-white bg-primary" variant="contained">
+          <Edit className="h-4 w-4 mr-2" /> Edit
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-white">
@@ -140,7 +127,7 @@ const EditPersonalDetails = ({ personalDetails, refetch }) => {
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-5 overflow-y-scroll max-h-[400px] pr-2">
+          <div className="flex flex-col gap-5 overflow-y-scroll max-h-[400px] pr-4">
             <div className="w-full flex flex-col gap-2">
               <Label
                 htmlFor="profileImage"
@@ -280,38 +267,7 @@ const EditPersonalDetails = ({ personalDetails, refetch }) => {
               )}
             </div>
           </div>
-
-          <DialogFooter className="!w-full !flex !flex-row !items-center !justify-between pt-5">
-            <Button
-              variant="outline"
-              type="reset"
-              size="lg"
-              disabled={isSubmitting}
-              onClick={() => {
-                reset();
-                setPreviewImage(personalDetails?.profileImage);
-              }}
-              className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
-            >
-              Reset
-            </Button>
-            <Button
-              variant="default"
-              type="submit"
-              size="lg"
-              className="font-semibold"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center">
-                  <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
-                  Saving...
-                </div>
-              ) : (
-                "Edit"
-              )}
-            </Button>
-          </DialogFooter>
+          <DialogFormButtons isSubmitting={isSubmitting} reset={reset} />
         </form>
       </DialogContent>
     </Dialog>

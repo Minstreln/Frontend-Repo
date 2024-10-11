@@ -1,33 +1,64 @@
-/* eslint-disable react/prop-types */
-import { Trash2, RefreshCw, GraduationCap } from "lucide-react";
+import { Trash2, GraduationCap } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import EditAcademicDetails from "./EditAcademicDetails";
+import {
+  useDeleteAcademicDetail,
+  useFetchAcademicDetails,
+} from "../../../../hooks/useCandidateAcademicDetails";
+import Loading from "../../../Loading";
+import AcademicDetailsForm from "./AcademicDetailsForm";
+import toast from "react-hot-toast";
 
-const AcademicDetails = ({
-  academicDetails,
-  refetch,
-  deleteAcademicDetail,
-}) => {
+const AcademicDetails = () => {
+  const {
+    data: academicDetails,
+    isLoading,
+    isError,
+    error,
+  } = useFetchAcademicDetails();
+  const deleteAcademicDetailMutation = useDeleteAcademicDetail();
+
+  if (isLoading) {
+    return (
+      <div className="py-6">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex items-center text-red-500 font-semibold py-6">
+        Error: {error.message}
+      </div>
+    );
+  }
+
+  const handleDeleteAcademicDetail = async (id) => {
+    try {
+      await deleteAcademicDetailMutation.mutateAsync(id);
+      toast.success("Academic Detail deleted successfully");
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error deleting Academic Detail:", error);
+    }
+  };
+
   return (
     <Card className="w-full shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => refetch()}
-          className="hidden lg:block"
-        >
-          <RefreshCw className="h-5 w-5" />
-        </Button>
+      <CardHeader className="flex flex-row items-center justify-start">
+        <AcademicDetailsForm />
       </CardHeader>
       <CardContent>
-        {academicDetails.length === 0 ? (
+        {academicDetails &&
+        academicDetails.data.academicDetails.length === 0 ? (
           <div className="text-center text-destructive">
             No Academic Details
           </div>
         ) : (
-          academicDetails.map((detail) => (
+          academicDetails &&
+          academicDetails.data.academicDetails.map((detail) => (
             <div key={detail._id} className="mb-4 p-4 border rounded-lg">
               <div className="flex justify-between items-start">
                 <div className="flex flex-row gap-5">
@@ -44,11 +75,11 @@ const AcademicDetails = ({
                   </div>
                 </div>
                 <div className="flex flex-row items-center">
-                  <EditAcademicDetails refetch={refetch} detail={detail} />
+                  <EditAcademicDetails detail={detail} />
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteAcademicDetail(detail._id)}
+                    onClick={() => handleDeleteAcademicDetail(detail._id)}
                   >
                     <Trash2 className="h-5 w-5 text-destructive" />
                   </Button>
