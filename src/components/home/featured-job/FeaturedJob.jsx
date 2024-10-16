@@ -1,11 +1,12 @@
 import { ArrowRight } from "lucide-react";
 import JobCard from "./JobCard";
 import { Button } from "../../ui/button";
-import { useAllJobs } from "../../../hooks/useAllJobs";
 import { Link } from "react-router-dom";
+import { useFetchAllJobs } from "../../../hooks/useJobs";
+import Loading from "../../Loading";
 
 const FeaturedJob = () => {
-  const { jobs, loading } = useAllJobs();
+  const { data: jobs, isLoading } = useFetchAllJobs();
   return (
     <section
       className={`self-stretch bg-white flex flex-col items-center justify-center py-24 box-border gap-12 max-w-full text-center text-21xl text-gray-900 font-body-medium-400 border-t border-t-[#F1F2F4]`}
@@ -24,11 +25,7 @@ const FeaturedJob = () => {
         </Link>
       </div>
       <div className="wrapper grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
-        {loading && (
-          <div className="w-full flex items-center text-primary font-semibold">
-            Loading...
-          </div>
-        )}
+        {isLoading && <Loading />}
         {jobs &&
           jobs.slice(0, 6).map((job) => (
             <Link key={job._id} to={`/find-job/${job._id}`}>

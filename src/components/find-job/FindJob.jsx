@@ -4,13 +4,14 @@ import SearchAndFilter from "./SearchAndFilter";
 import Pagination from "../Pagination";
 import { JOBS_PER_PAGE } from "../../lib/constants";
 import { Link } from "react-router-dom";
-import { useAllJobs } from "../../hooks/useAllJobs";
 import { useMemo, useState } from "react";
 import Loading from "../Loading";
+import { useFetchAllJobs } from "../../hooks/useJobs";
 
 const FindJob = () => {
-  const { data: jobs, loading, error } = useAllJobs();
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: jobs, isLoading, error } = useFetchAllJobs();
 
   const totalPages = useMemo(
     () => (jobs ? Math.ceil(jobs.length / JOBS_PER_PAGE) : 0),
@@ -35,7 +36,7 @@ const FindJob = () => {
           <Breadcrumb />
         </div>
       </div>
-      {loading && (
+      {isLoading && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           <Loading />
         </div>
@@ -47,13 +48,13 @@ const FindJob = () => {
         </div>
       )}
 
-      {!loading && !error && jobs && jobs.length === 0 && (
+      {!isLoading && !error && jobs && jobs.length === 0 && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           No jobs found
         </div>
       )}
 
-      {!loading && !error && jobs && jobs.length > 0 && (
+      {!isLoading && !error && jobs && jobs.length > 0 && (
         <div className="bg-white self-stretch w-full pb-16">
           <div className="wrapper flex flex-col py-6 gap-8">
             <SearchAndFilter />

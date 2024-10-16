@@ -12,17 +12,34 @@ import {
   Layers,
 } from "lucide-react";
 import ApplyJob from "./ApplyJob";
-import { useSaveJob } from "../../hooks/useSaveJob";
+
 import useAuth from "../../hooks/useAuth";
 import { userRole } from "../../lib/constants";
+import toast from "react-hot-toast";
+import { useFetchSavedJobs, useSaveJob } from "../../hooks/useJobs";
+import { useEffect, useState } from "react";
 
 const JobDetails = ({ job }) => {
-  const { saveJob, loading, success } = useSaveJob();
+  const [isSaved, setIsSaved] = useState(false);
   const { user } = useAuth();
+
+  const saveJobMutation = useSaveJob();
+  const { data } = useFetchSavedJobs();
+
+  useEffect(() => {
+    const saved = !!data?.data?.savedJobs?.find(
+      (savedJob) => savedJob._id === job._id
+    );
+
+    setIsSaved(saved);
+  }, [data, job._id, setIsSaved]);
 
   const handleSaveJob = async (e) => {
     e.preventDefault(); // Prevent the Link component from navigating
-    await saveJob(job._id);
+    await saveJobMutation.saveJob(job._id);
+
+    setIsSaved(true);
+    toast.success("Job saved successfully");
   };
 
   return (
@@ -56,12 +73,12 @@ const JobDetails = ({ job }) => {
             <Button
               variant="ghost"
               onClick={handleSaveJob}
-              disabled={loading || success}
+              disabled={saveJobMutation.loading || isSaved}
               className="rounded bg-primary/10 flex flex-row items-center justify-center p-3"
             >
               <Bookmark
                 className={`${
-                  success ? "fill-primary" : ""
+                  saveJobMutation.success || isSaved ? "fill-primary" : ""
                 } h-6 w-6 text-primary `}
               />
             </Button>
@@ -100,12 +117,12 @@ const JobDetails = ({ job }) => {
               <Button
                 variant="ghost"
                 onClick={handleSaveJob}
-                disabled={loading || success}
+                disabled={saveJobMutation.loading || isSaved}
                 className="rounded bg-primary/10 flex flex-row items-center justify-center p-3"
               >
                 <Bookmark
                   className={`${
-                    success ? "fill-primary" : ""
+                    saveJobMutation.success || isSaved ? "fill-primary" : ""
                   } h-6 w-6 text-primary `}
                 />
               </Button>

@@ -59,9 +59,11 @@ const ResumeForm = () => {
 
       await createResumeMutation.mutateAsync(formData);
 
-      toast.success("Resume added successfully");
-      reset();
-      setOpen(false);
+      if (createResumeMutation.isSuccess) {
+        toast.success("Resume added successfully");
+        reset();
+        setOpen(false);
+      }
     } catch (error) {
       toast.error(error.message || "Error adding resume");
       console.error("Error adding resume:", error);

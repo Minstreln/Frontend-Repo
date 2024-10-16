@@ -1,13 +1,12 @@
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "../../../styles/customTableSyales";
-import { Check, RefreshCw } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "../../ui/button";
-import { useAppliedJobs } from "../../../hooks/useAppliedJobs";
 import Loading from "../../Loading";
+import { useFetchAppliedJobs } from "../../../hooks/useJobs";
 
 const AppliedJobs = () => {
-  const { appliedJobs, loading, error, numberOfAppliedJobs, refetch } =
-    useAppliedJobs();
+  const { data: appliedJobs, isLoading, error } = useFetchAppliedJobs();
 
   const columns = [
     {
@@ -74,18 +73,12 @@ const AppliedJobs = () => {
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-1">
           <h2 className="text-lg text-gray-800 font-semibold">Applied Jobs</h2>
-          <span className="text-sm text-gray-600">({numberOfAppliedJobs})</span>
+          <span className="text-sm text-gray-600">
+            ({appliedJobs?.results})
+          </span>
         </div>
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => refetch()}
-          className="hidden lg:block"
-        >
-          <RefreshCw className="h-5 w-5" />
-        </Button>
       </div>
-      {loading && (
+      {isLoading && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           <Loading />
         </div>
@@ -97,22 +90,28 @@ const AppliedJobs = () => {
         </div>
       )}
 
-      {!loading && !error && appliedJobs.length === 0 && (
-        <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
-          No jobs found
-        </div>
-      )}
-      {!loading && !error && appliedJobs && appliedJobs.length > 0 && (
-        <DataTable
-          columns={columns}
-          data={appliedJobs}
-          customStyles={customTableStyles}
-          pagination
-          paginationPerPage={10}
-          paginationRowsPerPageOptions={[10, 15, 20]}
-          noHeader
-        />
-      )}
+      {!isLoading &&
+        !error &&
+        appliedJobs &&
+        appliedJobs.data.applications.length === 0 && (
+          <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
+            No jobs found
+          </div>
+        )}
+      {!isLoading &&
+        !error &&
+        appliedJobs &&
+        appliedJobs.data.applications.length > 0 && (
+          <DataTable
+            columns={columns}
+            data={appliedJobs.data.applications}
+            customStyles={customTableStyles}
+            pagination
+            paginationPerPage={10}
+            paginationRowsPerPageOptions={[10, 15, 20]}
+            noHeader
+          />
+        )}
     </div>
   );
 };

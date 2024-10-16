@@ -18,8 +18,7 @@ export const fetchResume = async () => {
     return response.data;
   } catch (error) {
     throw (
-      error.response?.data?.message ||
-      "An error occurred while fetching resume"
+      error.response?.data?.message || "An error occurred while fetching resume"
     );
   }
 };

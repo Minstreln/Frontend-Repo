@@ -1,14 +1,12 @@
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "../../../styles/customTableSyales";
-import { Button } from "../../ui/button";
-import { Bookmark, RefreshCw } from "lucide-react";
-import { useSavedJobs } from "../../../hooks/useSavedJobs";
+import { Bookmark } from "lucide-react";
 import ApplyJob from "../../find-job/ApplyJob";
 import Loading from "../../Loading";
+import { useFetchSavedJobs } from "../../../hooks/useJobs";
 
 const SavedJobs = () => {
-  const { savedJobs, loading, error, refetch, numberOfSavedJobs } =
-    useSavedJobs();
+  const { data, isLoading, error } = useFetchSavedJobs();
 
   const columns = [
     {
@@ -57,18 +55,10 @@ const SavedJobs = () => {
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-1">
           <h2 className="text-lg text-gray-800 font-semibold">Saved Jobs</h2>
-          <span className="text-sm text-gray-600">({numberOfSavedJobs})</span>
+          <span className="text-sm text-gray-600">({data?.results})</span>
         </div>
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => refetch()}
-          className="hidden lg:block"
-        >
-          <RefreshCw className="h-5 w-5" />
-        </Button>
       </div>
-      {loading && (
+      {isLoading && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           <Loading />
         </div>
@@ -80,16 +70,16 @@ const SavedJobs = () => {
         </div>
       )}
 
-      {!loading && !error && savedJobs.length === 0 && (
+      {!isLoading && !error && data && data.data.savedJobs.length === 0 && (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
           No jobs found
         </div>
       )}
 
-      {!loading && !error && savedJobs.length > 0 && (
+      {!isLoading && !error && data && data.data.savedJobs.length > 0 && (
         <DataTable
           columns={columns}
-          data={savedJobs}
+          data={data.data.savedJobs}
           customStyles={customTableStyles}
           pagination
           paginationPerPage={5}

@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Bell,
   Briefcase,
   Check,
   User,
@@ -12,13 +11,15 @@ import { Button } from "../../ui/button";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "../../../styles/customTableSyales";
 import { Link } from "react-router-dom";
-import { useAppliedJobs } from "../../../hooks/useAppliedJobs";
-import { useSavedJobs } from "../../../hooks/useSavedJobs";
+import { useFetchAppliedJobs, useFetchSavedJobs } from "../../../hooks/useJobs";
+import Loading from "../../Loading";
 
 const CandidateOverview = () => {
   const { user } = useAuth();
-  const { appliedJobs, numberOfAppliedJobs } = useAppliedJobs();
-  const { numberOfSavedJobs } = useSavedJobs();
+
+  const { data: appliedJobs, isLoading: applyJobsLoading } =
+    useFetchAppliedJobs();
+  const { data: savedJobs } = useFetchSavedJobs();
 
   const columns = [
     {
@@ -94,7 +95,7 @@ const CandidateOverview = () => {
         <Card className="bg-primary/10 border-0">
           <CardContent className="flex items-center justify-between p-4">
             <div className="flex flex-col justify-center">
-              <span className="text-2xl font-bold">{numberOfAppliedJobs}</span>
+              <span className="text-2xl font-bold">{appliedJobs?.results}</span>
               <span className="text-sm text-gray-500">Applied Jobs</span>
             </div>
             <div className="h-12 w-12 bg-white flex items-center justify-center rounded-md">
@@ -105,22 +106,11 @@ const CandidateOverview = () => {
         <Card className="bg-yellow-500/10 border-0">
           <CardContent className="flex items-center justify-between p-4">
             <div className="flex flex-col justify-center">
-              <span className="text-2xl font-bold">{numberOfSavedJobs}</span>
+              <span className="text-2xl font-bold">{savedJobs?.results}</span>
               <span className="text-sm text-gray-500">Saved Jobs</span>
             </div>
             <div className="h-12 w-12 bg-white flex items-center justify-center rounded-md">
               <User className="text-yellow-500" size={24} />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-green-500/10 border-0">
-          <CardContent className="flex items-center justify-between p-4">
-            <div className="flex flex-col justify-center">
-              <span className="text-2xl font-bold">574</span>
-              <span className="text-sm text-gray-500">Job Alerts</span>
-            </div>
-            <div className="h-12 w-12 bg-white flex items-center justify-center rounded-md">
-              <Bell className="text-green-500" size={24} />
             </div>
           </CardContent>
         </Card>
@@ -162,13 +152,23 @@ const CandidateOverview = () => {
           </Link>
         </div>
 
-        <DataTable
-          columns={columns}
-          data={appliedJobs}
-          customStyles={customTableStyles}
-          pagination
-          paginationPerPage={3}
-        />
+        {applyJobsLoading && <Loading />}
+
+        {appliedJobs && appliedJobs.data.applications.length === 0 && (
+          <div className="w-full flex items-center justify-center p-4">
+            <span className="text-gray-600">No data found</span>
+          </div>
+        )}
+
+        {appliedJobs && appliedJobs.data.applications.length > 0 && (
+          <DataTable
+            columns={columns}
+            data={appliedJobs.data.applications}
+            customStyles={customTableStyles}
+            pagination
+            paginationPerPage={3}
+          />
+        )}
       </div>
     </div>
   );
