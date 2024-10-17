@@ -23,7 +23,7 @@ const Header = () => {
           <MobileMenu />
           <Link to={"/"}>
             <h1 className="text-lg font-semibold bg-gradient-to-r to-primary from-gray-900 bg-clip-text text-transparent">
-              LysterPro
+            LysterPro
             </h1>
           </Link>
           {/** Desktop */}
