@@ -28,9 +28,9 @@ const Header = () => {
           </Link>
           {/** Desktop */}
           <nav className="space-x-4 hidden md:flex">
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <NavLink
-                key={item}
+                key={index}
                 to={item.path}
                 className="text-sm text-gray-600 hover:text-primary"
               >
