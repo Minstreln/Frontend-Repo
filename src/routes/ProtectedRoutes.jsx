@@ -1,14 +1,13 @@
 /* eslint-disable react/prop-types */
-
 import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Loading from "../components/Loading";
 
 const ProtectedRoutes = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="w-full flex items-center justify-center py-6">
         <Loading />
@@ -17,7 +16,9 @@ const ProtectedRoutes = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/signin" state={{ path: location.pathname }} />;
+    return (
+      <Navigate to="/signin" state={{ path: location.pathname }} replace />
+    );
   }
 
   return children;

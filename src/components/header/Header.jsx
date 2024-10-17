@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <header className="w-full bg-white border-b border-gray-200 space-y-5 flex-1">
       <div className="w-full wrapper flex items-center justify-between gap-5 py-4">
-        <div className="flex items-center lg:space-x-4 w-full">
+        <div className="flex items-center md:space-x-4 w-full">
           {/** Mobile */}
           <MobileMenu />
           <Link to={"/"}>
@@ -27,19 +27,16 @@ const Header = () => {
             </h1>
           </Link>
           {/** Desktop */}
-          <nav>
-            <ul className="space-x-4 hidden md:flex">
-              {navItems.map((item, index) => (
-                <li key={index}>
-                  <NavLink
-                    to={item.path}
-                    className="text-sm text-gray-600 hover:text-primary"
-                  >
-                    {item.name}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+          <nav className="space-x-4 hidden md:flex">
+            {navItems.map((item) => (
+              <NavLink
+                key={item}
+                to={item.path}
+                className="text-sm text-gray-600 hover:text-primary"
+              >
+                {item.name}
+              </NavLink>
+            ))}
           </nav>
         </div>
         {/** Auth section */}

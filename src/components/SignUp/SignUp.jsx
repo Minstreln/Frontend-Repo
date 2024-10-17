@@ -6,15 +6,15 @@ import {
   IconEye,
   IconEyeInvisible,
 } from "../../assets/icons/icons";
-import { useContext, useRef, useState } from "react";
-import AuthContext from "../context/AuthContext";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import useAuth from "../../hooks/useAuth";
 
 const SignUp = () => {
   const password = useRef(); //ref to togggle passowrd visibility
   const confirmPwd = useRef(); //ref to togggle confrimpassowrd visibility
   const terms = useRef();
-  const { register } = useContext(AuthContext); // Get register function from AuthContext
+  const { register } = useAuth(); // Get register function
 
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
   const [CPwdVisible, setCPwdVisible] = useState(false); //state for confirmpassword visibility
@@ -109,16 +109,12 @@ const SignUp = () => {
     }
 
     try {
-      // Call the register function from AuthContext
       setLoading(true);
-      const response = await register(values, opt);
+      await register({ ...values, isJobSeeker: opt }); // Use register from useAuth
 
-      if (response.status === "success") {
-        navigate("/signin", { replace: true });
-        toast.success("Registration successful!");
-
-        setLoading(false);
-      }
+      toast.success("Registration successful!");
+      setLoading(false);
+      navigate("/signin", { replace: true });
 
       //clear fields
       setvalues({

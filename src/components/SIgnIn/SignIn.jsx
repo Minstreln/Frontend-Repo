@@ -4,14 +4,14 @@ import {
   IconEye,
   IconEyeInvisible,
 } from "../../assets/icons/icons";
-import { useContext, useRef, useState } from "react";
-import AuthContext from "../context/AuthContext";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import useAuth from "../../hooks/useAuth";
 
 const SignIn = () => {
   const pwd = useRef(); //ref to togggle passowrd visibility
   const [PwdVisible, setPwdVisible] = useState(false); //state for password visibility
-  const { login } = useContext(AuthContext); //get login function from context
+  const { login } = useAuth(); //get login function
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false); // state for email validation
@@ -51,19 +51,14 @@ const SignIn = () => {
     }
 
     try {
-      // Call the login function from AuthContext
       setLoading(true);
-      const response = await login(email, password);
+      await login.mutateAsync({ email, password }); // Use login from useAuth
 
-      if (response.status === "success") {
-        toast.success("Login successful!");
-        navigate(redirectPath, { replace: true });
-
-        setLoading(false);
-      }
+      toast.success("Login successful!");
+      navigate(redirectPath, { replace: true });
     } catch (err) {
-      toast.error(err.message);
-      console.log("Login failed:", err.message);
+      toast.error(err);
+      console.log("Login failed:", err);
     } finally {
       setLoading(false);
     }
