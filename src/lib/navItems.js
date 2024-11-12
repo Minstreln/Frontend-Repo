@@ -39,9 +39,9 @@ export const employersSidebarNavItems = [
   { name: "Post Job", icon: BriefcaseBusiness, href: "post-job" },
   { name: "My Jobs", icon: BriefcaseIcon, href: "my-jobs" },
   {
-    name: "Saved Candidates",
+    name: "Job Applications",
     icon: BookmarkCheck,
-    href: "saved-candidates",
+    href: "job-applications",
   },
   {
     name: "Employer Profile",

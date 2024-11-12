@@ -23,7 +23,7 @@ const Header = () => {
           <MobileMenu />
           <Link to={"/"}>
             <h1 className="text-lg font-semibold bg-gradient-to-r to-primary from-gray-900 bg-clip-text text-transparent">
-            LysterPro
+              LysterPro
             </h1>
           </Link>
           {/** Desktop */}
@@ -64,7 +64,7 @@ const Header = () => {
                     </AvatarFallback>
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 flex flex-col gap-5">
+                <PopoverContent className="w-80 flex flex-col gap-4">
                   <div>
                     <h3 className="text-lg font-medium text-gray-900">
                       {user?.firstName} {user?.lastName}

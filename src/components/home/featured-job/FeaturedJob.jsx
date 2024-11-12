@@ -16,7 +16,7 @@ const FeaturedJob = () => {
       </div>
     );
 
-  const firstSixJobs = data.slice(0, 6) || [];
+  const firstSixJobs = data?.slice(0, 6) || [];
 
   return (
     <section
@@ -37,7 +37,7 @@ const FeaturedJob = () => {
       </div>
       <div className="wrapper grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
         {firstSixJobs && firstSixJobs.length > 0 ? (
-          firstSixJobs.map((job) => (
+          firstSixJobs?.map((job) => (
             <Link key={job._id} to={`/find-job/${job._id}`}>
               <JobCard {...job} />
             </Link>

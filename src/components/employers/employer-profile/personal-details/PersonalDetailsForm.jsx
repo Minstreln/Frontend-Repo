@@ -1,34 +1,33 @@
-import { useForm } from "react-hook-form";
-import { Input } from "../../../ui/input";
-import { Label } from "../../../ui/label";
-import { Button } from "../../../ui/button";
-import { Textarea } from "../../../ui/textarea";
-import userImage from "@/assets/user.png";
 import { useState } from "react";
-import axios from "axios";
+import { useCreateEmployerPersonalDetails } from "../../../../hooks/useEmployerPersonalDetails";
+import { Controller, useForm } from "react-hook-form";
+import { Label } from "../../../ui/label";
+import { Input } from "../../../ui/input";
+import { Button } from "../../../ui/button";
+import userImage from "@/assets/user.png";
 import toast from "react-hot-toast";
 import { cloudinaryConfig } from "../../../../config/config";
-import { useCreatePersonalDetails } from "../../../../hooks/useCandidatePersonalDetails";
+import axios from "axios";
 
 const PersonalDetailsForm = () => {
   const [previewImage, setPreviewImage] = useState(null);
 
-  const createPersonalDetailsMutation = useCreatePersonalDetails();
+  const createEmployerDetailsMutation = useCreateEmployerPersonalDetails();
 
   const {
     register,
     handleSubmit,
-    setValue,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       middleName: "",
-      profileImage: "",
       location: "",
-      aboutMe: "",
-      linkedin: "",
+      phoneNumber: "",
+      profileImage: "",
       github: "",
+      linkedin: "",
       portfolioSite: "",
     },
   });
@@ -37,11 +36,6 @@ const PersonalDetailsForm = () => {
     const file = event.target.files[0];
 
     if (file) {
-      setValue("profileImage", file, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewImage(e.target.result);
@@ -53,37 +47,33 @@ const PersonalDetailsForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Upload image to Cloudinary
       if (!data.profileImage) return;
 
       const cloudinaryFormData = new FormData();
-      cloudinaryFormData.append("file", data.profileImage);
+      cloudinaryFormData.append("file", data.profileImage[0]);
       cloudinaryFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
       cloudinaryFormData.append("api_key", cloudinaryConfig.apiKey);
 
-      const results = await axios.post(
+      const results = await await axios.post(
         `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
         cloudinaryFormData
       );
-
       if (!results.data.secure_url) {
-        throw new Error("Failed to upload image");
+        throw new Error("Failed to upload profile image");
       }
-
       setPreviewImage(results.data.secure_url);
 
       // submit form data
-
       const formData = { ...data, profileImage: results.data.secure_url };
 
-      await createPersonalDetailsMutation.mutateAsync(formData);
+      await createEmployerDetailsMutation.mutateAsync(formData);
 
-      toast.success("Profile added successfully");
+      toast.success("Personal details added successfully");
       reset();
       setPreviewImage(null);
     } catch (error) {
       toast.error(error);
-      console.error("Error adding profile:", error);
+      console.error("Error creating personal details:", error);
     }
   };
 
@@ -108,12 +98,29 @@ const PersonalDetailsForm = () => {
                 className="w-36 h-36 sm:w-40 sm:h-40 object-cover rounded-md"
               />
             )}
-            <Input
-              type="file"
-              id="profileImage"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="focus-visible:ring-0 h-10"
+            <Controller
+              name="profileImage"
+              control={control}
+              rules={{
+                required: "Profile Image is required",
+                validate: (value) => {
+                  if (value[0] instanceof File) {
+                    return true;
+                  }
+                  return "Profile Image is required";
+                },
+              }}
+              render={({ field }) => (
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    field.onChange(e.target.files);
+                    handleFileChange(e);
+                  }}
+                  className="focus-visible:ring-0 h-10 max-w-sm"
+                />
+              )}
             />
           </div>
           {errors.profileImage && (
@@ -122,18 +129,41 @@ const PersonalDetailsForm = () => {
             </span>
           )}
         </div>
-
-        <div className="w-full flex flex-col gap-2">
-          <Label htmlFor="middleName" className="text-gray-900 text-[16px]">
-            Middle Name
-          </Label>
-          <Input
-            type="text"
-            id="middleName"
-            placeholder="Middle Name"
-            {...register("middleName")}
-            className="focus-visible:ring-0 !py-5"
-          />
+        <div className="w-full flex flex-col md:flex-row gap-5">
+          <div className="w-full flex flex-col gap-2">
+            <Label htmlFor="middleName" className="text-gray-900 text-[16px]">
+              Middle Name
+            </Label>
+            <Input
+              type="text"
+              id="middleName"
+              placeholder="Middle Name"
+              {...register("middleName")}
+              className="focus-visible:ring-0 !py-5"
+            />
+          </div>
+          <div className="w-full flex flex-col gap-2">
+            <Label htmlFor="phoneNumber" className="text-gray-900 text-[16px]">
+              Phone Number
+            </Label>
+            <Input
+              type="tel"
+              id="phoneNumber"
+              placeholder="Phone Number"
+              {...register("phoneNumber", {
+                pattern: {
+                  value: /^(\+\d{1,3}[- ]?)?\d{10,14}$/,
+                  message: "Invalid phone number format",
+                },
+              })}
+              className="focus-visible:ring-0 !py-5"
+            />
+            {errors.phoneNumber && (
+              <span className="text-red-500 text-sm">
+                {errors.phoneNumber.message}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="w-full flex flex-col md:flex-row gap-5">
@@ -216,29 +246,6 @@ const PersonalDetailsForm = () => {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col gap-2">
-          <Label htmlFor="aboutMe" className="text-gray-900 text-[16px]">
-            About Me
-          </Label>
-          <Textarea
-            placeholder="Type something about you here..."
-            id="aboutMe"
-            {...register("aboutMe", {
-              required: "About Me is required",
-              minLength: {
-                value: 300,
-                message: "About Me should be at least 300 characters",
-              },
-            })}
-            className="focus-visible:ring-0 !py-5"
-            rows={8}
-          />
-          {errors.aboutMe && (
-            <span className="text-red-500 text-sm">
-              {errors.aboutMe?.message}
-            </span>
-          )}
-        </div>
 
         <div className="w-full flex flex-row items-center gap-5 justify-end">
           <Button
@@ -248,7 +255,7 @@ const PersonalDetailsForm = () => {
               reset();
               setPreviewImage(null);
             }}
-            disabled={isSubmitting || createPersonalDetailsMutation.isLoading}
+            disabled={isSubmitting || createEmployerDetailsMutation.isLoading}
             className="bg-red-500/90 text-white hover:bg-red-500 hover:text-white font-semibold"
           >
             Reset
@@ -257,7 +264,7 @@ const PersonalDetailsForm = () => {
             variant="default"
             type="submit"
             className="font-semibold"
-            disabled={isSubmitting || createPersonalDetailsMutation.isLoading}
+            disabled={isSubmitting || createEmployerDetailsMutation.isLoading}
           >
             {isSubmitting ? (
               <div className="flex items-center">

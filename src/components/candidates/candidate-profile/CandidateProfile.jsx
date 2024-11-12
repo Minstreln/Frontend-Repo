@@ -74,36 +74,16 @@ const CandidateProfile = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="personal" className="w-full mt-12 sm:mt-8">
-          <div className="w-full flex flex-col gap-5">
-            <h3 className="text-gray-900 pb-2">Personal Details</h3>
-            <div className="w-full">
-              <PersonalDetails />
-            </div>
-          </div>
+          <PersonalDetails />
         </TabsContent>
         <TabsContent value="academic" className="w-full mt-12 sm:mt-8">
-          <div className="w-full flex flex-col gap-5">
-            <h3 className="text-gray-900 pb-2">Education</h3>
-            <div className="w-full">
-              <AcademicDetails />
-            </div>
-          </div>
+          <AcademicDetails />
         </TabsContent>
         <TabsContent value="experience" className="w-full mt-12 sm:mt-8">
-          <div className="w-full flex flex-col gap-5">
-            <h3 className="text-gray-900 pb-2">Work Experience</h3>
-            <div className="w-full">
-              <WorkExperienceDetails />
-            </div>
-          </div>
+          <WorkExperienceDetails />
         </TabsContent>
         <TabsContent value="resume" className="w-full mt-12 sm:mt-8">
-          <div className="w-full flex flex-col gap-5">
-            <h3 className="text-gray-900 pb-2">Upload Resume</h3>
-            <div className="w-full">
-              <Resumes />
-            </div>
-          </div>
+          <Resumes />
         </TabsContent>
       </Tabs>
     </div>

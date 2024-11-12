@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import JobBenefits from "./JobBenefits";
+import JobBenefits from "../JobBenefits";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { usePostJob } from "../../../hooks/useJobs";
 
 const PostJob = () => {
   const [tag, setTag] = useState([]);
@@ -19,7 +20,7 @@ const PostJob = () => {
   const [categoryValue, setCategoryValue] = useState(1);
   const [category, setCategory] = useState(""); // value that will be sent to backend
 
-  const token = localStorage.getItem("token");
+  const postJobMutation = usePostJob();
 
   const [values, setValues] = useState({
     position: "",
@@ -91,40 +92,32 @@ const PostJob = () => {
       tag,
       category,
     };
-    console.log(actualValues);
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-    const url =
-      "https://lysterpro-backend.onrender.com/api/v1/jobListing/add-joblisting";
 
     try {
-      const res = await axios.post(url, actualValues, { headers });
-      toast.success("Job added successfully!");
-
-      setValues({
-        position: "",
-        hiringCompany: "",
-        employmentType: "full-time",
-        location: "india",
-        city: "Bangladesh",
-        salaryType: "Yearly",
-        minSalary: "",
-        maxSalary: "",
-        jobSetup: "on-site",
-        positionLevel: "Entry level",
-        yearsOfExperience: "",
-        expirationDate: "",
-        jobDescription: "",
-        education: "graduate",
-      });
-      setRequirements([]);
-      setResponsiblity([]);
-      setSkillsAndQualifications([]);
-      setTag([]);
-
-      return res.data;
+      await postJobMutation.mutateAsync(actualValues);
+      if (postJobMutation.isSuccess) {
+        toast.success("Job added successfully!");
+        setValues({
+          position: "",
+          hiringCompany: "",
+          employmentType: "full-time",
+          location: "india",
+          city: "Bangladesh",
+          salaryType: "Yearly",
+          minSalary: "",
+          maxSalary: "",
+          jobSetup: "on-site",
+          positionLevel: "Entry level",
+          yearsOfExperience: "",
+          expirationDate: "",
+          jobDescription: "",
+          education: "graduate",
+        });
+        setRequirements([]);
+        setResponsiblity([]);
+        setSkillsAndQualifications([]);
+        setTag([]);
+      }
     } catch (err) {
       throw new Error(err.response.data.message || "Registration failed");
     }

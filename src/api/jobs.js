@@ -22,7 +22,7 @@ export const fetchJobById = async (id) => {
   }
 };
 
-// fetch applied jobs
+// fetch applied jobs(candidate)
 export const fetchAppliedJobs = async () => {
   try {
     const response = await api.get("/applications");
@@ -33,7 +33,7 @@ export const fetchAppliedJobs = async () => {
   }
 };
 
-// apply for a job
+// apply for a job(candidate)
 export const applyForJob = async (applicationData) => {
   try {
     const response = await api.post(`/applications/create`, applicationData);
@@ -44,7 +44,7 @@ export const applyForJob = async (applicationData) => {
   }
 };
 
-// save a job
+// save a job(candidate)
 export const saveJob = async (jobId) => {
   try {
     const response = await api.post(`/jobseeker/save-job/${jobId}`);
@@ -55,7 +55,7 @@ export const saveJob = async (jobId) => {
   }
 };
 
-// fetch saved jobs
+// fetch saved jobs(candidate)
 export const fetchSavedJobs = async () => {
   try {
     const response = await api.get("/jobseeker/saved-jobs");
@@ -63,5 +63,51 @@ export const fetchSavedJobs = async () => {
   } catch (error) {
     console.error("Failed to fetch saved jobs: ", error);
     return error.response?.data?.message || "Failed to fetch saved jobs";
+  }
+};
+
+// fetch recruiter open jobs(recruiter)
+export const fetchRecruiterOpenJobs = async () => {
+  try {
+    const response = await api.get("/recruiter/open-jobs");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch recruiter open jobs: ", error);
+    return (
+      error.response?.data?.message || "Failed to fetch recruiter open jobs"
+    );
+  }
+};
+
+// fetch recruiter jobs(recruiter)
+export const fetchRecruiterJobs = async () => {
+  try {
+    const response = await api.get("/jobListing/my-joblisting");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch recruiter jobs: ", error);
+    return error.response?.data?.message || "Failed to fetch recruiter jobs";
+  }
+};
+
+// post a job(recruiter)
+export const postJob = async (jobData) => {
+  try {
+    const response = await api.post("/jobListing/add-joblisting", jobData);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to post job: ", error);
+    return error.response?.data?.message || "Failed to post job";
+  }
+};
+
+// job applications(recruiter)
+export const jobApplications = async (applicationData) => {
+  try {
+    const response = await api.post("/applications/create", applicationData);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to post job: ", error);
+    return error.response?.data?.message || "Failed to post job";
   }
 };

@@ -24,12 +24,12 @@ import DashboardWrapper from "./components/DashboardWrapper.jsx";
 import AppliedJobs from "./components/candidates/applied-jobs/AppliedJobs.jsx";
 import SavedJobs from "./components/candidates/saved-jobs/SavedJobs.jsx";
 import DashboardOverviewWrapper from "./components/DashboardOverviewWrapper.jsx";
-import EmployerProfile from "./components/employers/EmployerProfile.jsx";
-import PostJob from "./components/employers/PostJob.jsx";
-import MyJobs from "./components/employers/MyJobs.jsx";
-import SavedCandidates from "./components/employers/SavedCandidates.jsx";
+import EmployerProfile from "./components/employers/employer-profile/EmployerProfile.jsx";
+import PostJob from "./components/employers/post-job/PostJob.jsx";
+import MyJobs from "./components/employers/my-jobs/MyJobs.jsx";
 import ProtectedRoutes from "./routes/ProtectedRoutes.jsx";
 import CandidateProfile from "./components/candidates/candidate-profile/CandidateProfile.jsx";
+import JobApplications from "./components/employers/job-applications/JobApplications.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -56,7 +56,7 @@ const router = createBrowserRouter(
         <Route path="employer-profile" element={<EmployerProfile />} />
         <Route path="post-job" element={<PostJob />} />
         <Route path="my-jobs" element={<MyJobs />} />
-        <Route path="saved-candidates" element={<SavedCandidates />} />
+        <Route path="job-applications" element={<JobApplications />} />
       </Route>
     </Route>
   )

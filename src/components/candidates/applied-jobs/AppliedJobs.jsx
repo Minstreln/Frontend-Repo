@@ -6,7 +6,7 @@ import Loading from "../../Loading";
 import { useFetchAppliedJobs } from "../../../hooks/useJobs";
 
 const AppliedJobs = () => {
-  const { data: appliedJobs, isLoading, error } = useFetchAppliedJobs();
+  const { data, isLoading, error } = useFetchAppliedJobs();
 
   const columns = [
     {
@@ -68,50 +68,41 @@ const AppliedJobs = () => {
     },
   ];
 
+  if (isLoading) return <Loading />;
+  if (error)
+    return (
+      <div className="wrapper w-full flex items-center text-red-500 font-semibold py-6">
+        Error: {error}
+      </div>
+    );
+
+  const appliedJobsCount = data?.results || 0;
+  const appliedJobs = data?.data?.applications || [];
+
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-1">
           <h2 className="text-lg text-gray-800 font-semibold">Applied Jobs</h2>
-          <span className="text-sm text-gray-600">
-            ({appliedJobs?.results})
-          </span>
+          <span className="text-sm text-gray-600">({appliedJobsCount})</span>
         </div>
       </div>
-      {isLoading && (
+
+      {appliedJobs.length === 0 ? (
         <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
-          <Loading />
+          No jobs found
         </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={appliedJobs}
+          customStyles={customTableStyles}
+          pagination
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 15, 20]}
+          noHeader
+        />
       )}
-
-      {error && (
-        <div className="wrapper w-full flex items-center text-red-500 font-semibold py-6">
-          Error: {error}
-        </div>
-      )}
-
-      {!isLoading &&
-        !error &&
-        appliedJobs &&
-        appliedJobs.data.applications.length === 0 && (
-          <div className="wrapper w-full flex items-center text-primary font-semibold py-6">
-            No jobs found
-          </div>
-        )}
-      {!isLoading &&
-        !error &&
-        appliedJobs &&
-        appliedJobs.data.applications.length > 0 && (
-          <DataTable
-            columns={columns}
-            data={appliedJobs.data.applications}
-            customStyles={customTableStyles}
-            pagination
-            paginationPerPage={10}
-            paginationRowsPerPageOptions={[10, 15, 20]}
-            noHeader
-          />
-        )}
     </div>
   );
 };

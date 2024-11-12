@@ -5,7 +5,7 @@ import { DialogFooter } from "./ui/dialog";
 const DialogFormButtons = ({ isSubmitting, reset }) => {
   return (
     <DialogFooter>
-      <div className="w-full flex flex-row items-center gap-2 justify-between pt-5">
+      <div className="w-full flex flex-row items-center gap-5 justify-end pt-5">
         <Button
           variant="outline"
           type="reset"

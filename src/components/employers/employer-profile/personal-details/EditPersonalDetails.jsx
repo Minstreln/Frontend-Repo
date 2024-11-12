@@ -14,35 +14,34 @@ import { Label } from "../../../ui/label";
 import { Input } from "../../../ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import userImage from "@/assets/user.png";
-import { Textarea } from "../../../ui/textarea";
 import { cloudinaryConfig } from "../../../../config/config";
 import DialogFormButtons from "../../../DialogFormButtons";
-import { useUpdatePersonalDetails } from "../../../../hooks/useCandidatePersonalDetails";
+import { useUpdateEmployerPersonalDetails } from "../../../../hooks/useEmployerPersonalDetails";
 
 const EditPersonalDetails = ({ personalDetails }) => {
+  const [open, setOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(
     personalDetails?.profileImage
   );
-  const [open, setOpen] = useState(false);
 
-  const updatePersonalDetailsMutation = useUpdatePersonalDetails();
+  const updatePersonalDetailsMutation = useUpdateEmployerPersonalDetails();
 
   const {
     register,
     handleSubmit,
-    setValue,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       middleName: personalDetails?.middleName,
-      profileImage: personalDetails?.profileImage,
       location: personalDetails?.location,
-      aboutMe: personalDetails?.aboutMe,
-      linkedin: personalDetails?.linkedin,
+      phoneNumber: personalDetails?.phoneNumber,
+      profileImage: personalDetails?.profileImage,
       github: personalDetails?.github,
+      linkedin: personalDetails?.linkedin,
       portfolioSite: personalDetails?.portfolioSite,
     },
   });
@@ -51,11 +50,6 @@ const EditPersonalDetails = ({ personalDetails }) => {
     const file = event.target.files[0];
 
     if (file) {
-      setValue("profileImage", file, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewImage(e.target.result);
@@ -64,6 +58,12 @@ const EditPersonalDetails = ({ personalDetails }) => {
       reader.readAsDataURL(file);
     }
   };
+
+  const resetForm = () => {
+    reset();
+    setPreviewImage(personalDetails?.profileImage);
+  };
+
   const onSubmit = async (data) => {
     try {
       let profileImageUrl = personalDetails.profileImage;
@@ -71,7 +71,6 @@ const EditPersonalDetails = ({ personalDetails }) => {
       // Upload new certificate to Cloudinary
       if (data.profileImage && data.profileImage[0] instanceof File) {
         const cloudinaryFormData = new FormData();
-
         cloudinaryFormData.append("file", data.profileImage[0]);
         cloudinaryFormData.append(
           "upload_preset",
@@ -108,6 +107,7 @@ const EditPersonalDetails = ({ personalDetails }) => {
       console.error("Error updating profile:", error);
     }
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -144,12 +144,32 @@ const EditPersonalDetails = ({ personalDetails }) => {
                     className="w-36 h-36 sm:w-40 sm:h-40 object-cover rounded-md"
                   />
                 )}
-                <Input
-                  type="file"
-                  id="profileImage"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="focus-visible:ring-0 h-10 max-w-sm"
+                <Controller
+                  name="profileImage"
+                  control={control}
+                  rules={{
+                    required: "Profile Image is required",
+                    validate: (value) => {
+                      if (
+                        value[0] instanceof File ||
+                        personalDetails?.profileImage
+                      ) {
+                        return true;
+                      }
+                      return "Profile Image is required";
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        field.onChange(e.target.files);
+                        handleFileChange(e);
+                      }}
+                      className="focus-visible:ring-0 h-10 max-w-sm"
+                    />
+                  )}
                 />
               </div>
               {errors.profileImage && (
@@ -159,43 +179,87 @@ const EditPersonalDetails = ({ personalDetails }) => {
               )}
             </div>
 
-            <div className="w-full flex flex-col gap-2">
-              <Label htmlFor="middleName" className="text-gray-900 text-[16px]">
-                Middle Name
-              </Label>
-              <Input
-                type="text"
-                id="middleName"
-                placeholder="Middle Name"
-                defaultValue={personalDetails?.middleName || ""}
-                {...register("middleName", { required: true })}
-                className="focus-visible:ring-0 !py-5"
-              />
-              {errors.middleName && (
-                <span className="text-red-500 text-sm">
-                  Middle Name is required
-                </span>
-              )}
+            <div className="w-full flex flex-col md:flex-row gap-5">
+              <div className="w-full flex flex-col gap-2">
+                <Label
+                  htmlFor="middleName"
+                  className="text-gray-900 text-[16px]"
+                >
+                  Middle Name
+                </Label>
+                <Input
+                  type="text"
+                  id="middleName"
+                  placeholder="Middle Name"
+                  {...register("middleName")}
+                  className="focus-visible:ring-0 !py-5"
+                />
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <Label
+                  htmlFor="phoneNumber"
+                  className="text-gray-900 text-[16px]"
+                >
+                  Phone Number
+                </Label>
+                <Input
+                  type="tel"
+                  id="phoneNumber"
+                  placeholder="Phone Number"
+                  {...register("phoneNumber", {
+                    pattern: {
+                      value: /^(\+\d{1,3}[- ]?)?\d{10,14}$/,
+                      message: "Invalid phone number format",
+                    },
+                  })}
+                  className="focus-visible:ring-0 !py-5"
+                />
+                {errors.phoneNumber && (
+                  <span className="text-red-500 text-sm">
+                    {errors.phoneNumber.message}
+                  </span>
+                )}
+              </div>
             </div>
+
             <div className="w-full flex flex-col md:flex-row gap-5">
               <div className="w-full flex flex-col gap-2">
                 <Label htmlFor="linkedin" className="text-gray-900 text-[16px]">
-                  Linked Profile URL
+                  LinkedIn Profile URL
                 </Label>
                 <Input
                   type="text"
                   id="linkedin"
-                  placeholder="Linked Profile URL"
-                  defaultValue={personalDetails?.linkedin || ""}
-                  {...register("linkedin", { required: true })}
+                  placeholder="https://www.linkedin.com/in/username"
+                  {...register("linkedin", {
+                    pattern: {
+                      value:
+                        /^https:\/\/[a-z]{2,3}\.linkedin\.com\/in\/[\w\\-]+\/?$/,
+                      message: "Please enter a valid LinkedIn profile URL,",
+                    },
+                  })}
                   className="focus-visible:ring-0 !py-5"
                 />
                 {errors.linkedin && (
                   <span className="text-red-500 text-sm">
-                    Linked Profile URL is required
+                    {errors.linkedin.message}
                   </span>
                 )}
               </div>
+              <div className="w-full flex flex-col gap-2">
+                <Label htmlFor="location" className="text-gray-900 text-[16px]">
+                  Location
+                </Label>
+                <Input
+                  type="text"
+                  id="location"
+                  placeholder="City, Country or Region"
+                  {...register("location")}
+                  className="focus-visible:ring-0 !py-5"
+                />
+              </div>
+            </div>
+            <div className="w-full flex flex-col md:flex-row gap-5">
               <div className="w-full flex flex-col gap-2">
                 <Label htmlFor="github" className="text-gray-900 text-[16px]">
                   GitHub Profile URL
@@ -203,19 +267,22 @@ const EditPersonalDetails = ({ personalDetails }) => {
                 <Input
                   type="text"
                   id="github"
-                  placeholder="GitHub Profile URL"
-                  defaultValue={personalDetails?.github || ""}
-                  {...register("github", { required: true })}
+                  placeholder="https://github.com/username"
+                  {...register("github", {
+                    pattern: {
+                      value:
+                        /^https:\/\/github\.com\/[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i,
+                      message: "Please enter a valid GitHub profile URL",
+                    },
+                  })}
                   className="focus-visible:ring-0 !py-5"
                 />
                 {errors.github && (
                   <span className="text-red-500 text-sm">
-                    GitHub Profile URL is required
+                    {errors.github.message}
                   </span>
                 )}
               </div>
-            </div>
-            <div className="w-full flex flex-col md:flex-row gap-5">
               <div className="w-full flex flex-col gap-2">
                 <Label
                   htmlFor="portfolioSite"
@@ -226,52 +293,14 @@ const EditPersonalDetails = ({ personalDetails }) => {
                 <Input
                   type="text"
                   id="portfolioSite"
-                  placeholder="Portifolio Site URL"
-                  defaultValue={personalDetails?.portfolioSite || ""}
+                  placeholder="https://example.com"
                   {...register("portfolioSite")}
                   className="focus-visible:ring-0 !py-5"
                 />
               </div>
-              <div className="w-full flex flex-col gap-2">
-                <Label htmlFor="location" className="text-gray-900 text-[16px]">
-                  Location
-                </Label>
-                <Input
-                  type="text"
-                  id="location"
-                  placeholder="Location"
-                  defaultValue={personalDetails?.location || ""}
-                  {...register("location", { required: true })}
-                  className="focus-visible:ring-0 !py-5"
-                />
-                {errors.location && (
-                  <span className="text-red-500 text-sm">
-                    Location is required
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="w-full flex flex-col gap-2">
-              <Label htmlFor="aboutMe" className="text-gray-900 text-[16px]">
-                About Me
-              </Label>
-              <Textarea
-                placeholder="Type something about you here..."
-                id="aboutMe"
-                defaultValue={personalDetails?.aboutMe || ""}
-                {...register("aboutMe", { required: true })}
-                className="focus-visible:ring-0 !py-5"
-                rows={8}
-              />
-              {errors.aboutMe && (
-                <span className="text-red-500 text-sm">
-                  About Me is required
-                </span>
-              )}
             </div>
           </div>
-          <DialogFormButtons isSubmitting={isSubmitting} reset={reset} />
+          <DialogFormButtons isSubmitting={isSubmitting} reset={resetForm} />
         </form>
       </DialogContent>
     </Dialog>

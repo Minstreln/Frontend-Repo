@@ -21,7 +21,9 @@ export const useFetchWorkExperience = () => {
   return useQuery({
     queryKey: ["candidateWorkExperience"],
     queryFn: fetchWorkExperiences,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 1000 * 60 * 60 * 24, // Set stale time to 24 hours
+    cacheTime: 1000 * 60 * 60 * 24, // Keep data in cache for 24 hours
+    refetchOnWindowFocus: false, // Disable refetch on window focus
   });
 };
 
