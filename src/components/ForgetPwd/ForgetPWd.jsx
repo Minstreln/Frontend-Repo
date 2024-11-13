@@ -19,8 +19,8 @@ const ForgetPWd = () => {
   };
 
   return (
-    <div className="w-[500px] mx-auto my-20">
-      <h1 className="text-[25px] font-medium mb-3">Forget Password</h1>
+    <div className="sm:w-[600px] w-[90%] mx-auto my-20">
+      <h1 className="sm:text-[25px] text-[20px] font-medium mb-3">Forget Password</h1>
       <h3 className="text-[15px] text-gray-600 mb-2">
         Go back to{" "}
         <Link to="/signIn" className="text-primary font-semibold">
