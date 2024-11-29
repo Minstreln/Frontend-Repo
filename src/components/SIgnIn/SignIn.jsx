@@ -65,8 +65,8 @@ const SignIn = () => {
   };
 
   return (
-    <div className="w-[600px] mx-auto my-20">
-      <h1 className="text-[25px] font-medium mb-3">Sign In</h1>
+    <div className="sm:w-[600px] w-[90%] mx-auto my-20">
+      <h1 className="sm:text-[25px] text-[20px] font-medium mb-3">Sign In</h1>
       <h3 className="text-[15px] text-gray-600 mb-10">
         Don&apos;t have an account?{" "}
         <Link to="/signUp" className="text-primary font-semibold">
@@ -76,20 +76,20 @@ const SignIn = () => {
       <div>
         <form action="" onSubmit={handleSubmit}>
           <div className="grid grid-rows-2 gap-4">
-            <div className="w-[90%]">
+            <div className="sm:w-[90%] w-full">
               <input
                 type="email"
                 value={email}
                 onChange={() => setEmail(event.target.value)}
                 required
                 placeholder="Email address"
-                className="border px-5 py-2 rounded-md text-[17px] w-full"
+                className="border  px-5 py-2 rounded-md text-[17px] w-full"
               />
               <div className="text-red-400">
                 {emailIsInvalid && <p>Please enter a valid email address</p>}
               </div>
             </div>
-            <div className="w-[90%] relative">
+            <div className="sm:w-[90%] w-full relative">
               <div
                 className="absolute top-3 right-5 cursor-pointer text-[20px]"
                 onClick={DisplayPassword}
@@ -129,7 +129,7 @@ const SignIn = () => {
               Forgot Password
             </Link>
           </div>
-          <button className="flex items-center justify-center gap-4 w-[90%] bg-primary rounded-md py-3 mt-5 text-white">
+          <button className="flex items-center justify-center gap-4 sm:w-[90%] w-full bg-primary rounded-md py-3 mt-5 text-white">
             {loading ? (
               <div className="flex items-center">
                 <span className="animate-spin h-5 w-5 mr-3 border-t-2 border-b-2 border-white rounded-full" />
