@@ -1,6 +1,6 @@
 import Breadcrumb from "../Breadcrumb";
 import JobCard from "../home/featured-job/JobCard";
-import SearchAndFilter from "./SearchAndFilter";
+import SearchJobs from "./SearchJobs";
 import Pagination from "../Pagination";
 import { JOBS_PER_PAGE } from "../../lib/constants";
 import { Link } from "react-router-dom";
@@ -10,19 +10,39 @@ import { useFetchAllJobs } from "../../hooks/useJobs";
 
 const FindJob = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
 
   const { data: jobs, isLoading, error } = useFetchAllJobs();
 
+  const filteredJobs = useMemo(() => {
+    if (!jobs) return [];
+
+    return jobs.filter((job) => {
+      // Search term filter
+      const matchesSearch =
+        !searchTerm ||
+        job.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.hiringCompany.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // Location filter
+      const matchesLocation =
+        !locationFilter ||
+        job.location.toLowerCase().includes(locationFilter.toLowerCase());
+
+      return matchesSearch && matchesLocation;
+    });
+  }, [jobs, searchTerm, locationFilter]);
+
   const totalPages = useMemo(
-    () => (jobs ? Math.ceil(jobs.length / JOBS_PER_PAGE) : 0),
-    [jobs]
+    () => Math.ceil(filteredJobs.length / JOBS_PER_PAGE),
+    [filteredJobs]
   );
 
   const paginatedJobs = useMemo(() => {
-    if (!jobs) return [];
     const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
-    return jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
-  }, [jobs, currentPage]);
+    return filteredJobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
+  }, [filteredJobs, currentPage]);
 
   const goToPage = (page) => {
     setCurrentPage(page);
@@ -57,7 +77,10 @@ const FindJob = () => {
       {!isLoading && !error && jobs && jobs.length > 0 && (
         <div className="bg-white self-stretch w-full pb-16">
           <div className="wrapper flex flex-col py-6 gap-8">
-            <SearchAndFilter />
+            <SearchJobs
+              onSearch={setSearchTerm}
+              onLocationFilter={setLocationFilter}
+            />
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start justify-start content-start gap-x-5 gap-y-6 text-left text-lg text-gray-900">
               {paginatedJobs.map((job) => (
                 <Link key={job._id} to={`/find-job/${job._id}`}>

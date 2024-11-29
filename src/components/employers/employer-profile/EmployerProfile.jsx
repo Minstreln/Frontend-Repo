@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
-import { Settings, User2 } from "lucide-react";
+import { User2 } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import CompanyDetails from "./company-details/CompanyDetails";
 import PersonalDetails from "./personal-details/PersonalDetails";
@@ -41,28 +41,12 @@ const EmployerProfile = () => {
           >
             <User2 className="mr-2 h-5 w-5" /> Personal Details
           </TabsTrigger>
-          <TabsTrigger
-            value="settings"
-            onClick={() => setActiveTab("settings")}
-            className={cn(
-              "py-1 mb-2 font-medium border-b-2 border-b-white !rounded-none !shadow-none transition-colors flex-grow sm:flex-grow-0",
-              "text-sm sm:text-base",
-              activeTab === "settings"
-                ? "!text-primary border-b-primary"
-                : "bg-white text-gray-600 hover:text-primary"
-            )}
-          >
-            <Settings className="mr-2 h-5 w-5" /> Account Settings
-          </TabsTrigger>
         </TabsList>
         <TabsContent value="company" className="w-full mt-12 sm:mt-8">
           <CompanyDetails />
         </TabsContent>
         <TabsContent value="personal" className="w-full mt-12 sm:mt-8">
           <PersonalDetails />
-        </TabsContent>
-        <TabsContent value="settings" className="w-full mt-12 sm:mt-8">
-          Settings
         </TabsContent>
       </Tabs>
     </div>
